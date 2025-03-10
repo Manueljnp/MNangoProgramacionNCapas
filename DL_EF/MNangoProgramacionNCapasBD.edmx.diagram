@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="4a73e302dbc94861b4339677beaf224f" Name="Diagram1">
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.Usuario" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.Rol" Width="1.5" PointX="0.75" PointY="6" />
+        <AssociationConnector Association="MNangoProgramacionNCapasBDModel.FK_IdRol" />
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.Colonia" Width="1.5" PointX="7.875" PointY="1.125" />
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.Direccion" Width="1.5" PointX="10.125" PointY="1.625" />
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.Estado" Width="1.5" PointX="3.375" PointY="1.375" />
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.Municipio" Width="1.5" PointX="5.625" PointY="1.25" />
+        <AssociationConnector Association="MNangoProgramacionNCapasBDModel.FK__Colonia__IdMunic__398D8EEE" />
+        <AssociationConnector Association="MNangoProgramacionNCapasBDModel.FK__Direccion__IdCol__3C69FB99" />
+        <AssociationConnector Association="MNangoProgramacionNCapasBDModel.FK__Direccion__IdUsu__3D5E1FD2" />
+        <AssociationConnector Association="MNangoProgramacionNCapasBDModel.FK__Municipio__IdEst__36B12243" />
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.UsuarioGetAllView" Width="1.5" PointX="3.375" PointY="4.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

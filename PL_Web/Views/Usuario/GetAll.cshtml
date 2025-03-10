@@ -1,0 +1,202 @@
+﻿@model ML.Usuario
+
+@{
+    ViewBag.Title = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<h2>GetAll</h2>
+
+<a href="@Url.Action("Form", "Usuario")" class="btn btn-primary mb-3">Agregar Registro</a>
+
+<!--Ocultar la busqueda usando COLLAPSE-->
+<p>                                                                                     <!--Nombre del Id del DIV-->
+    <button type="button" data-bs-toggle="collapse" class="btn btn-dark mt-3" data-bs-target="#DivBusquedaAbierta">Busqueda Abierta</button>
+    <button type="button" data-bs-toggle="collapse" class="btn btn-secondary mt-3" data-bs-target="#extraView">Otro botón</button>
+</p>
+
+<!-- Escribir un ID para llamarlo desde el botón de arriba-->
+<div id="DivBusquedaAbierta" class="collapse multi-section">
+    <div class="card p-3 bg-light shadow-sm">
+        <!--         Nombre del Método y Controlador - tipo de acción      dejar por si vamos a cargar archivos-->
+        @using (Html.BeginForm("GetAll", "Usuario", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+        {
+
+            <div class="row">
+                <div class="col">
+                    @Html.LabelFor(model => model.Nombre, new { @class = "form-label text-dark fw-bold", @id = "lblNombre" })
+                    @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control rounded-pill" })
+                </div>
+                <div class="col">
+                    @Html.LabelFor(model => model.ApellidoPaterno, new { @class = "form-label text-dark fw-bold", @id = "lblApellidoPaterno" })
+                    @Html.TextBoxFor(model => model.ApellidoPaterno, new { @class = "form-control rounded-pill" })
+                </div>
+                <div class="col">
+                    @Html.LabelFor(model => model.ApellidoMaterno, new { @class = "form-label text-dark fw-bold", @id = "lblApellidoMaterno" })
+                    @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control rounded-pill" })
+                </div>
+                <div class="col">
+                    @Html.LabelFor(model => model.Rol.IdRol, new { @class = "form-label text-dark fw-bold", @id = "lblRol" })
+                    @Html.DropDownListFor(model => model.Rol.IdRol, new SelectList(Model.Rol.Roles, "IdRol", "Nombre"),
+                   "Selecciona un Rol", new { @class = "form-control", @id = "ddlRol" })
+                </div>
+            </div>
+            <button type="submit" class="btn btn-dark mt-3"> Buscar </button>
+        }
+    </div>
+</div>
+
+<!-- Sección Extra (Otra vista) -->
+<div id="extraView" class="collapse multi-section">
+    <div class="card p-3 bg-info text-white shadow-sm">
+        <h4>Contenido de la Otra Vista</h4>
+        <p>Aquí puedes colocar gráficos, estadísticas o cualquier otro contenido adicional.</p>
+    </div>
+</div>
+
+<p></p>
+
+@if (Model.Usuarios.Count > 0)
+{
+    <div class="table-responsive">
+
+        <!-- <button type="button" class="btn btn-primary mb-3">Agregar</button> -->
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th scoope="col">Estatus</th>
+                    <th scoope="col">Editar</th>
+                    <th scope="col">UserName</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellido Paterno</th>
+                    <th scope="col">Apellido Materno</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Password</th>
+                    <th scope="col">Fecha de Nacimiento</th>
+                    <th scope="col">Sexo</th>
+                    <th scope="col">Telefono</th>
+                    <th scope="col">Celular</th>
+                    <th scope="col">CURP</th>
+                    <th scope="col">Nombre Rol</th>
+                    <th scoope="col">Dirección</th>
+                    <th scoope="col">Imagen</th>
+                    <th scoope="col">Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ML.Usuario usuario in Model.Usuarios)
+                {
+                    <tr>
+                        <td>
+                            @if (usuario.Estatus)
+                            {<!--El INPUT nos ayuda a saber la función, nos devuelbe un TRUE o un FALSE-->
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked
+                                           onchange="CambioEstatus(@usuario.IdUsuario, this)">
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                                           onchange="CambioEstatus(@usuario.IdUsuario, this)">
+                                </div>
+                            }
+
+                        </td>
+
+                        <!--Quitar este botón:
+                            <button class="bg-warning">
+                            <i class="bi bi-pencil"></i>
+                            </button>
+                        -->
+                        <td>
+                            <a href="@Url.Action("Form", "Usuario", new {IdUsuario = usuario.IdUsuario})"
+                               class="btn btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                        </td>
+                        <td>@usuario.UserName</td>
+                        <td>@usuario.Nombre</td>
+                        <td>@usuario.ApellidoPaterno</td>
+                        <td>@usuario.ApellidoMaterno</td>
+                        <td>@usuario.Email</td>
+                        <td>@usuario.Password</td>
+                        <td>@usuario.FechaNacimiento</td>
+                        <td>@usuario.Sexo</td>
+                        <td>@usuario.Telefono</td>
+                        <td>@usuario.Celular</td>
+                        <td>@usuario.CURP</td>
+                        <td>@usuario.Rol.Nombre</td>
+                        <td>
+                            @usuario.Direccion.Calle, @usuario.Direccion.NumeroInterior, @usuario.Direccion.NumeroExterior, <br>
+                            @usuario.Direccion.Colonia.Nombre, @usuario.Direccion.Colonia.CodigoPostal, @usuario.Direccion.Colonia.Municipio.Nombre, <br>
+                            @usuario.Direccion.Colonia.Municipio.Estado.Nombre <br>
+
+                        </td>
+                        <td>
+                            @if (usuario.Imagen != null)
+                            {
+                                <img src="@($"data:image/jpeg;base64,{Convert.ToBase64String(usuario.Imagen)}")" width="80" height="80" />
+                            }
+                            else
+                            {
+                                <img id="imgUsuario" src="https://thumb.ac-illust.com/51/51e1c1fc6f50743937e62fca9b942694_t.jpeg" width="80" height="80" />
+
+                            }
+                        </td>
+                        <td>
+                            <!-- Ya No usaremos el botón y dentro el Icono-->
+                            <!--<button class="bg-danger">
+                                <i class="bi bi-trash3"></i>
+                            </button>-->
+                            <!-- Cambiar a ANCHOR (a) y en el CLASS poner BTN, Además se hace una condición con JScript-->
+                            <a href="@Url.Action("Delete", "Usuario", new {IdUsuario = usuario.IdUsuario})"
+                               class="btn btn-danger " onclick="return confirm('Seguro que lo quieres borrar?')">
+
+                                <i class="bi bi-trash3"></i>
+
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">
+        No hay registros en la Base de Datos.
+    </div>
+}
+
+<script src="~/Scripts/jquery-3.7.0.js"></script>
+<script>
+    //let div = $("div")
+    //console.log(div)
+    function CambioEstatus(IdUsuario, input) {
+        let estatus = input.checked
+        $.ajax({                //Metodo     Controlador
+            url: "@Url.Action("CambioEstatus", "Usuario")",  //Ruta del método a consumir (Ruta Relativa)
+            dataType: "json", //Tipo de información a enviar (JSON/xml, etc)
+            type: "POST",   //Tipo de petición (GET, POST, PUT, DELETE)
+            data: { IdUsuario: IdUsuario, Estatus: estatus },  //Que voy a enviar
+            //JSON se compone de Claves/Llaves y Sus valores (exactamente iguales a las del controlador)
+            success: function (result) {
+                if (result.Correct) {
+                    //algo
+                }
+                else {
+                    alert("Hubo un Error")
+                }
+            },    //entra cuando ajax se conectó bien con el método (Success siempre ejecuta una función)
+            error: function (xhr) {
+                console.log(xhr)
+            }   //se ejecuta cuando ajax NO se conectó bien con el método
+        })
+    }
+</script>
