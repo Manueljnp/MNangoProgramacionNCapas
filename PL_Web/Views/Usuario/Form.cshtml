@@ -58,7 +58,7 @@
                 @Html.TextBoxFor(model => model.Email, new
                 {
                     @class = "form-control rounded-pill",
-               @onblur = "validarCorreo(event)",
+                    @onblur = "validarCorreo(event)",
                     @id = "inptEmail"
                 })
                 <span class="error"></span>
@@ -66,11 +66,13 @@
             <div class="col">
                 @Html.LabelFor(model => model.Password, new { @class = "form-label text-dark fw-bold" })
                 @Html.TextBoxFor(model => model.Password, new
-                {
-                    @class = "form-control rounded-pill",
-                    @type = "password",
-                    @id = "inptPassword"
-                })
+           {
+               @class = "form-control rounded-pill",
+               @type = "password",
+               @id = "inptPassword",
+               @onblur = "validarPasswordRegex(event)"
+           })
+                <span class="error"></span>
 
             </div>
             <div class="col">
@@ -100,7 +102,7 @@
             </div>
 
         </div>
-        <!--ROL, CURP, -->
+        <!--Telefono - Celular - CURP - ROL -->
         <div class="row">
             <div class="col">
                 <!--Onkeyup para cadena completa-->
@@ -148,8 +150,9 @@
 
                 @Html.LabelFor(model => model.Rol.IdRol, new { @class = "form-label text-dark fw-bold" })
                 <!-- Nueva lista que está en el Modelo Rol y se llama Roles -->
-                @Html.DropDownListFor(model => model.Rol.IdRol, new SelectList(Model.Rol.Roles, "IdRol", "Nombre"), "Selecciona un Rol", new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.Rol.IdRol, new SelectList(Model.Rol.Roles, "IdRol", "Nombre"), "Selecciona un Rol", new { @class = "form-control", @onblur="BorrarMensaje(event)" })
                 <!--IdRol=Nombre de la propiedad, Nombre=Lo que va a ver el usuario-->
+                <span class="error"></span>
             </div>
         </div>
     </div>
@@ -189,7 +192,8 @@
             <div class="col">
                 @Html.LabelFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, new { @class = "form-label text-dark fw-bold" })
                 @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, new SelectList(Model.Direccion.Colonia.Municipio.Estado.Estados, "IdEstado", "Nombre"),
-               "Selecciona el Estado", new { @onchange = "MunicipioGetByIdEstado()", @id = "ddlEstado", @class = "form-control" })
+               "Selecciona el Estado", new { @onchange = "MunicipioGetByIdEstado()", @id = "ddlEstado", @class = "form-control", @onblur = "BorrarMensaje(event)" })
+                <span class="error"></span>
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new { @class = "form-label text-dark fw-bold" })
@@ -199,11 +203,13 @@
                     @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new SelectList(Model.Direccion.Colonia.Municipio.Municipios, "IdMunicipio", "Nombre"),
                    "Selecciona un Municipio",
                     new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control" })
+                    
                 }
-                else
+                else //Para AGREGAR
                 {
                     @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new SelectList(String.Empty), "Selecciona un Municipio",
-                   new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control" })
+                   new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control", @onblur= "BorrarMensaje(event)" })
+                    <span class="error"></span>
                 }
             </div>
             <div class="col">
@@ -215,10 +221,11 @@
                    "Selecciona una Colonia",
                    new { @id = "ddlColonia", @class = "form-control" })
                 }
-                else
+                else //Para AGREGAR
                 {
                     @Html.DropDownListFor(model => model.Direccion.Colonia.IdColonia, new SelectList(String.Empty), "Selecciona una Colonia",
-                    new { @id = "ddlColonia", @class = "form-control" })
+                    new { @id = "ddlColonia", @class = "form-control", @onblur = "BorrarMensaje(event)" })
+                    <span class="error"></span>
                 }
             </div>
         </div>
@@ -514,6 +521,25 @@
             errorMessage.textContent = ''; // Limpiar mensaje de error
         }
 
+    }
+
+    function validarPasswordRegex(event) {
+        var inputField = event.target;
+        var entrada = inputField.value;
+        var errorMessage = inputField.parentNode.querySelector(".error");
+
+        var regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@@$!%*?&])[A-Za-z\d@@$!%*?&]{8,}$/;
+
+        if (regex.test(entrada)) {
+            //Todo bien
+            errorMessage.textContent = ''
+            inputField.style.borderColor = 'green';
+        }
+        else {
+            //Todo Mal
+            errorMessage.textContent = 'Password inválido';
+            inputField.style.borderColor = 'red';
+        }
     }
 
     //Validar VACIOS
