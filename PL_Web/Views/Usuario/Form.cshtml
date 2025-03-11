@@ -6,9 +6,9 @@
 }
 
 <h2>Usuario</h2>
-                    <!--Poner este evento enctype para envíar archivos al controlador-->
-@using (Html.BeginForm("Form", "Usuario", FormMethod.Post, new { @enctype = "multipart/form-data", 
-    @onsubmit="validarFormulario(event)" })) //Onsubmit para saber si...
+<!--Poner este evento enctype para envíar archivos al controlador-->
+@using (Html.BeginForm("Form", "Usuario", FormMethod.Post, new
+{ @enctype = "multipart/form-data" })) //Onsubmit para saber si...
 {
     @Html.HiddenFor(model => model.IdUsuario)
     @Html.HiddenFor(model => model.Imagen)
@@ -16,24 +16,38 @@
         <div class="row">
             <div class="col">
                 @Html.LabelFor(model => model.UserName, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.UserName, new { @class = "form-control rounded-pill", @onblur="validarVacio(event)", @id="inptUserName" })
+                @Html.TextBoxFor(model => model.UserName, new { @class = "form-control rounded-pill", @onblur = "validarVacio(event)", @id = "inptUserName" })
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.Nombre, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control rounded-pill", 
-               @onkeypress = "SoloLetras(event)", @onblur="BorrarMensaje(event)", @id="idNombre"}) <!--ONKEYPRESS=> detecta la tecla presionada (evento)-->
+                @Html.TextBoxFor(model => model.Nombre, new
+                {
+                    @class = "form-control rounded-pill",
+                    @onkeypress = "SoloLetras(event)",
+                    @onblur = "BorrarMensaje(event)",
+                    @id = "idNombre"
+                }) <!--ONKEYPRESS=> detecta la tecla presionada (evento)-->
                 <span class="error"></span>
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.ApellidoPaterno, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.ApellidoPaterno, new { @class = "form-control rounded-pill", 
-               @onkeypress="SoloLetras(event)", @onblur="BorrarMensaje(event)" })
+                @Html.TextBoxFor(model => model.ApellidoPaterno, new
+                {
+                    @class = "form-control rounded-pill",
+               @onkeypress = "SoloLetras(event)",
+                    @onblur = "BorrarMensaje(event)"
+                })
                 <span class="error"></span>
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.ApellidoMaterno, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control rounded-pill",
-               @onkeypress="SoloLetras(event)", @onblur="BorrarMensaje(event)" })
+                @Html.TextBoxFor(model => model.ApellidoMaterno, new
+                {
+                    data_optional = "true",
+                    @class = "form-control rounded-pill",
+               @onkeypress = "SoloLetras(event)",
+                    @onblur = "BorrarMensaje(event)"
+                })
                 <span class="error"></span>
             </div>
         </div>
@@ -41,20 +55,28 @@
         <div class="row">
             <div class="col">
                 @Html.LabelFor(model => model.Email, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.Email, new { @class = "form-control rounded-pill",
-               @onblur= "validarCorreo(event)", @id="inptEmail" })
+                @Html.TextBoxFor(model => model.Email, new
+                {
+                    @class = "form-control rounded-pill",
+               @onblur = "validarCorreo(event)",
+                    @id = "inptEmail"
+                })
                 <span class="error"></span>
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.Password, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.Password, new { @class = "form-control rounded-pill", @type="password",
-                @id="inptPassword"})
-                
+                @Html.TextBoxFor(model => model.Password, new
+                {
+                    @class = "form-control rounded-pill",
+                    @type = "password",
+                    @id = "inptPassword"
+                })
+
             </div>
             <div class="col">
                 <label class="form-label text-dark fw-bold">Confirmar Password</label>
                 <input class="form-control rounded-pill" type="password" id="inptConfirmarPassword"
-                        onblur="validarPassword(event)"/>
+                       onblur="validarPassword(event)" />
                 <span class="error"></span>
             </div>
             <div class="col">
@@ -63,29 +85,57 @@
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.Sexo, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.Sexo, new { @class = "form-control rounded-pill" })
+                <div class="form-check">
+                    @Html.RadioButtonFor(model => model.Sexo, "F", new { @class = "form-check-input", @id = "sexoF" })
+                    @Html.Label("sexoF", "Femenino", new { @class = "form-check-label" })
+                </div>
+                <div class="form-check">
+                    @Html.RadioButtonFor(model => model.Sexo, "M", new { @class = "form-check-input", @id = "sexoM" })
+                    @Html.Label("sexoM", "Masculino", new { @class = "form-check-label" })
+                </div>
+                <div class="form-check">
+                    @Html.RadioButtonFor(model => model.Sexo, "O", new { @class = "form-check-input", @id = "sexoO" })
+                    @Html.Label("sexoO", "Otro", new { @class = "form-check-label" })
+                </div>
             </div>
-        </div>
 
+        </div>
+        <!--ROL, CURP, -->
         <div class="row">
-            <div class="col">                                    <!--Onkeyup para cadena completa-->
+            <div class="col">
+                <!--Onkeyup para cadena completa-->
                 @Html.LabelFor(model => model.Telefono, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.Telefono, new { @class = "form-control rounded-pill", 
-               @onkeypress="validarNumerosCaracter(event)", @onkeyup="validarNumerosCadena(event)", 
-               @onblur="BorrarMensaje(event)" }) 
+                @Html.TextBoxFor(model => model.Telefono, new
+                {
+                    data_optional = "true",
+                    @class = "form-control rounded-pill",
+                    @onkeypress = "validarNumerosCaracter(event)",
+                    @onkeyup = "validarNumerosCadena(event)",
+                    @onblur = "BorrarMensaje(event)"
+                })
                 <span class="error"></span>
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.Celular, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.Celular, new { @class = "form-control rounded-pill",
-               @onkeypress="validarNumerosCaracter(event)", @onkeyup="validarNumerosCadena(event)", 
-               @onblur= "BorrarMensaje(event)" })
+                @Html.TextBoxFor(model => model.Celular, new
+                {
+                    data_optional = "true",
+                    @class = "form-control rounded-pill",
+                    @onkeypress = "validarNumerosCaracter(event)",
+                    @onkeyup = "validarNumerosCadena(event)",
+                    @onblur = "BorrarMensaje(event)"
+                })
                 <span class="error"></span>
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.CURP, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.CURP, new { @class = "form-control rounded-pill", 
-               @onkeyup="validarCURP(event)", @onblur="BorrarMensaje(event)" })
+                @Html.TextBoxFor(model => model.CURP, new
+                {
+                    data_optional = "true",
+                    @class = "form-control rounded-pill",
+                    @onkeyup = "validarCURP(event)",
+                    @onblur = "BorrarMensaje(event)"
+                })
                 <span class="error"></span>
             </div>
             <div class="col">
@@ -110,17 +160,29 @@
         <div class="row">
             <div class="col">
                 @Html.LabelFor(model => model.Direccion.Calle, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.Direccion.Calle, new { @class = "form-control rounded-pill",
-               @onkeypress = "SoloLetras(event)", @onblur="BorrarMensaje(event)" })
+                @Html.TextBoxFor(model => model.Direccion.Calle, new
+                {
+                    @class = "form-control rounded-pill",
+                    @onkeypress = "SoloLetras(event)",
+                    @onblur = "BorrarMensaje(event)"
+                })
                 <span class="error"></span>
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.Direccion.NumeroInterior, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.Direccion.NumeroInterior, new { @class = "form-control rounded-pill" })
+                @Html.TextBoxFor(model => model.Direccion.NumeroInterior, new { @class = "form-control rounded-pill", data_optional = "true",
+               @onkeypress = "validarNumerosCaracter(event)",
+               @onkeyup = "validarNumerosCadenaDireccion(event)",
+               @onblur = "BorrarMensaje(event)"})
+                <span class="error"></span>
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.Direccion.NumeroExterior, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.Direccion.NumeroExterior, new { @class = "form-control rounded-pill" })
+                @Html.TextBoxFor(model => model.Direccion.NumeroExterior, new { @class = "form-control rounded-pill",
+               @onkeypress = "validarNumerosCaracter(event)",
+               @onkeyup = "validarNumerosCadenaDireccion(event)",
+               @onblur = "BorrarMensaje(event)"})
+                <span class="error"></span>
             </div>
         </div>
         <div class="row">
@@ -165,7 +227,7 @@
     <p></p>
     <h2>Imagen del Usuario</h2>
     <div class="mb-3 mt-3 col">
-        <input type="file" accept=".png" name="inptFileImagen" id="inptFileImagen" class="form-control" onchange="validarExtension(); visualizarImagen(this);" />
+        <input type="file" accept=".png" name="inptFileImagen" id="inptFileImagen" class="form-control" data-optional="true" onchange="validarExtension(); visualizarImagen(this);" />
         <!--Poner un Campo Oculto para mantener imagen actual si no se selecciona una nueva
         <input type="hidden" name="ImagenActual" id="ImagenActual" value="Convert.ToBase64String(Model.Imagen)" /> -->
         @if (Model.Imagen == null)
@@ -183,9 +245,6 @@
         <button type="submit" class="btn btn-primary mb-2" name="btnAgregarRegistro" id="btnAgregarRgistro" onchange="validarRegistro();">Agregar Registro</button>
     </div>
 }
-
-
-
 
 <script src="~/Scripts/jquery-3.7.0.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -307,7 +366,7 @@
         var entrada = String.fromCharCode(event.which) //fromcharcode => Convertir el código which a Letra (solo válida el último caracter)
         var inputField = event.target; //target => Imprime todo lo relacionado al INPUT (type, class, id...)
         var ErrorMessage = inputField.parentNode.querySelector('.error') //ParentNode=> todos los relacionados a el (spam en este caso) | queryselector =>
-        if ((/[a-zA-Z]/.test(entrada))) {
+        if ((/^([a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+)(\s[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+){0,2}$/.test(entrada))) {
             console.log("Es una letra")
             inputField.style.borderColor = 'green';
             ErrorMessage.textContent = ''; //Cuando se vuelva a escribir letra borrar el mensaje de error
@@ -358,16 +417,34 @@
         }
     }
 
+    function validarNumerosCadenaDireccion(event) {
+        var inputField = event.target;
+        var entrada = inputField.value; //La entrada captura todo el texto del input
+        var ErrorMessage = inputField.parentNode.querySelector('.error');
+
+        if (entrada.length > 5) {
+
+            inputField.value = entrada.slice(0, 5); //borrar el último caracter ingresado si se pasa de 5
+            //entrada.preventDefault(); //NO FUNCIONA para cadea (aparentemente)
+            inputField.borderColor = 'red';
+            ErrorMessage.textContent = 'No exceder cantidad de numeros';
+        }
+        else {
+            inputField.borderColor = 'green';
+            //ErrorMessage.textContent = ''; //Este borra el errormessage de validarCaracter=>'Solo se permiten Numeros'
+        }
+    }
+
     function validarCorreo(event) {
         var inputField = event.target;
         var entrada = inputField.value;
         var errorMessage = inputField.parentNode.querySelector(".error");
 
-        //var regex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        var regex = /^[\w\-\.]+@@([\w-]+\.)+[\w-]{2,}$/;
 
         if (regex.test(entrada)) {
             //Todo bien
-            errorMessage.textContent = 'Correo correcto'
+            errorMessage.textContent = ''
             inputField.style.borderColor = 'green';
         }
         else {
@@ -399,10 +476,21 @@
         var inputField = event.target;
         var errorMessage = inputField.parentNode.querySelector('.error');
 
+        //Guardar si es opcional
+        var opcional = inputField.getAttribute('data-optional') === 'true';
+
         //Validar si el input quedó vacío
         if (inputField.value.length === 0) { //si la longitud del valor del input es === 0 (está vacío)
-            errorMessage.textContent = 'No puede ir vacío';
-            inputField.style.borderColor = 'red'
+            if (opcional) {
+                //si el input es opcional y está vacío...
+                errorMessage.textContent = '';
+                inputField.style.borderColor = 'green';
+            }
+            else { //Si solo es vacío...
+                errorMessage.textContent = 'No puede ir vacío';
+                inputField.style.borderColor = 'red';
+
+            }
         }
         else {
             errorMessage.textContent = '';
@@ -437,18 +525,49 @@
     //event=> evento
 
     //Validar FORM (Solo NOMBRE, Terminar)
-    $('Form').on('submit', function (event) {
-        var userValor = document.getElementById("inptUserName")
-        var userField = event.target;
-        var errorMessage = userField.parentNode.querySelector(".error");
-        if (userValor = '') {
-            userField.style.borderColor = 'red';
+    //$('Form') => Seleccionar formulario    .on('submit', function (event) {...} ↓
+    $('Form').on('submit', function (event) { //añade un "listener" al evento submit del formulario
+
+        //Bandera
+        let bandera = true;
+
+        //Validar solo los inputs          Validar Select (estos son los DDL)
+        $(this).find('input.form-control, select.form-control').each(function () {
+            //Si el input tiene el atributo data_optional
+            if ($(this).data('optional') === true) return; // y si es "true", excluir de validación (no es válida/obligatoria)
+
+            if ($(this).val().trim() === '') {
+                $(this).css('border-color', 'red');
+                //Poner un mensaje de error?
+                bandera = false;
+            }
+            else {
+                $(this).css('border-color', 'green');
+                $(this).next('.error').text('');
+            }
+        })
+
+        //Primera validación (TODOS los inputs VACIOS)
+        if (!bandera) {
+            alert("Completa los campos obligatorios");
+            event.preventDefault();
+            return; //detener la ejecución de la función
         }
-        if ($('#idNombre').val() == '') {
+
+        ///NUNCA ENTRA A LA SEGUNDA VALIDACIÓN PERO FUNCIONA ↓
+        //Si hay por lo menos un input ROJO, entonces NO ENVIAR formulario
+        /*if ($(this).find('input.form-control').filter(function () {
+            return $(this).css('border-color') === 'rgb(255, 0, 0)';
+        }).length > 0) {
+            alert("Completa los campos obligatorios OTRA VEZ");
+            event.preventDefault();
+        }*/
+
+        /*if ($('#idNombre').val() == '') {
 
             alert("Completa los campos");
             event.preventDefault();
-        }
-    })
+        }*/
+    });
 
 </script>
