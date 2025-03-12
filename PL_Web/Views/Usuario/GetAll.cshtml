@@ -51,7 +51,11 @@
 <!-- Sección Extra (Otra vista) -->
 <div id="extraView" class="collapse multi-section">
     <div class="card p-3 bg-light shadow-sm">
-        @using(Html.BeginForm("CargaMasiva", "Materia", ))
+        @using (Html.BeginForm("CargaMasiva", "Usuario", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+        {
+    <input type="file" name="inptExcel" id="inptExcel" onchange="validarExtensionExcel()" accept=".xlsx" />
+    <button type="submit" class="btn btn-dark mt-3" onclick="return validarRegistro()"> Enviar</button>
+            }
     </div>
 </div>
 
@@ -173,7 +177,11 @@ else
     </div>
 }
 
+
 <script src="~/Scripts/jquery-3.7.0.js"></script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <script>
     //let div = $("div")
     //console.log(div)
@@ -197,5 +205,36 @@ else
                 console.log(xhr)
             }   //se ejecuta cuando ajax NO se conectó bien con el método
         })
+    }
+
+    function validarExtensionExcel() {
+        var input = $('#inptExcel')[0].files[0].name.split('.').pop().toLowerCase();
+        var extensionValida = ['xlsx'];
+        var bandera = false;
+
+        for (var i = 0; i <= extensionValida.length; i++) {
+            if (input === extensionValida[i]) {
+                bandera = true;
+            }
+        }
+
+        if (!bandera) {
+            alert('Solo se permiten archivos Excel (.xlsx)');
+            $('#inptExcel').val('');
+        }
+    }
+
+    function validarRegistro() {
+        var input = document.getElementById('inptExcel');
+        var errorMessage = input.parentNode.querySelector("Error");
+        if (input.files.length > 0) {
+            alert('Archivo cargado correctamente');
+        }
+        else {
+            console.log('No metiste nada');
+            alert('No haz seleccionado ningún archivo');
+            event.preventDefault();
+            return;
+        }
     }
 </script>

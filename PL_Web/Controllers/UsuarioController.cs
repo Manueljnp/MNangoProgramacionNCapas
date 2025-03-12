@@ -1,7 +1,9 @@
 ﻿using BL;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity.Core.Objects;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -182,5 +184,58 @@ namespace PL_Web.Controllers
             return data;
         }
 
+        [HttpPost]
+        public ActionResult CargaMasiva()
+        {
+            HttpPostedFileBase excelUsuario = Request.Files["inptExcel"];
+
+            string extensionPermitida = ".xlsx";
+            
+            if(excelUsuario.ContentLength > 0)
+            {
+                string extensionObtenida = Path.GetExtension(excelUsuario.FileName);
+                if (extensionObtenida == extensionPermitida)
+                {
+                    //Primero crear carpeta para guardar copias del archivo (PL_Web>Add>Carpeta>CargaMasiva)
+
+                    //Ruta Relativa, guardar ahí el archivo concatenando fecha, hora, etc.
+                    string ruta = Server.MapPath("~/CargaMasiva/") +
+                        Path.GetFileNameWithoutExtension(excelUsuario.FileName) +
+                        "-" + DateTime.Now.ToString("ddMMyyyyHmmssff") + ".xlsx";
+
+                    if(!System.IO.File.Exists(ruta))    //Pegar la cadena de conexión de OLEDB (Web.config)
+                    {
+                        excelUsuario.SaveAs(ruta);
+                        string cadenaConexion = ConfigurationManager.ConnectionStrings["OleDbConnection"]+ruta;
+
+                        ML.Result resultExcel = BL.Usuario.LeerExcel(cadenaConexion);
+
+                        if(resultExcel.Objects.Count > 0) //Si el objeto trae más de 1 entonces ¿si los trae?
+                        {
+                            Console.WriteLine(resultExcel.Objects);
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        //Vista Parcial (vuelve a cargar el archivo, porque ya existe)
+                    }
+                }
+                else
+                {
+                    //Vista Parcial (El archivo no es un Excel)
+                }
+            }
+            else
+            {
+                //Vistas parciales (No me diste ningún archivo)
+
+            }
+            //Devolver a la vista GetAll
+            return RedirectToAction("GetAll");
+        }
     }
 }

@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Migrations;
+using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Mime;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -913,6 +915,127 @@ namespace BL
                 result.Ex = ex;
             }
             return result;
+        }
+
+        //PARA EXCEL
+        public static ML.Result LeerExcel(string cadenaConexion)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using(OleDbConnection context = new OleDbConnection(cadenaConexion))
+                {
+                    string query = "select * from [Hoja1$]";
+                    using (OleDbCommand cmd = new OleDbCommand())
+                    {
+                        cmd.CommandText = query;
+                        cmd.Connection = context;
+
+                        OleDbDataAdapter adapter = new OleDbDataAdapter();
+                        adapter.SelectCommand = cmd;
+
+                        DataTable tablaUsuario = new DataTable();
+                        adapter.Fill(tablaUsuario);
+
+                        if(tablaUsuario.Rows.Count > 0)
+                        {
+                            result.Objects = new List<object>();
+
+                            foreach (DataRow row in tablaUsuario.Rows)
+                            {
+                                ML.Usuario usuario = new ML.Usuario();
+                                usuario.Rol = new ML.Rol();
+                                usuario.Direccion = new ML.Direccion();
+                                usuario.Direccion.Colonia = new ML.Colonia();
+                                usuario.Direccion.Colonia.Municipio = new ML.Municipio();
+                                usuario.Direccion.Colonia.Municipio.Estado = new ML.Estado();
+
+                                usuario.UserName = row[0].ToString();
+                                usuario.Nombre = row[1].ToString();
+                                usuario.ApellidoPaterno = row[2].ToString();
+                                usuario.ApellidoMaterno = row[3].ToString();
+                                usuario.Email = row[4].ToString();
+                                usuario.Password = row[5].ToString();
+                                usuario.FechaNacimiento = row[6].ToString();
+                                usuario.Sexo = row[7].ToString();
+                                usuario.Telefono = row[8].ToString();
+                                usuario.Celular = row[9].ToString();
+                                usuario.CURP = row[10].ToString();
+                                usuario.Rol.IdRol = Convert.ToUInt16(row[11]);
+
+                                //Direción
+                                usuario.Direccion.Calle = row[12].ToString();
+                                usuario.Direccion.NumeroInterior = row[13].ToString();
+                                usuario.Direccion.NumeroExterior = row[14].ToString();
+                                usuario.Direccion.Colonia.Municipio.Estado.IdEstado = Convert.ToUInt16(row[15]);
+                                usuario.Direccion.Colonia.Municipio.IdMunicipio = Convert.ToUInt16(row[16]); 
+                                usuario.Direccion.Colonia.IdColonia = Convert.ToUInt16(row[17]);
+                                
+
+                                result.Objects.Add(usuario);
+                            }
+                            result.Correct = true;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+
+            return result;
+        }
+
+        public static ML.ResultExcel ValidarExcel(List<object> registros) //result.Objects Lee el excel
+        {
+            ML.ResultExcel resultExcel = new ML.ResultExcel();
+            int contador = 1; //Para que el usuario entienda ya que nosotros sabemos que comienza en 0
+
+            foreach(ML.Usuario usuario in  registros)
+            {
+                //validar solo lenght vacio y nulo.
+                //Cuando comience a evaluar el registro
+                resultExcel.NumeroRegistro = contador;
+
+                //Validar la longitud del Nombre
+                if(usuario.Nombre.Length > 50 || usuario.Nombre == "" || usuario.Nombre == null)
+                {
+                    resultExcel.ErrorMessage += "El nombre es muy largo o es vacío"; //+= porque ErrorMessage (puede) ya traer algo guardado, y si solo le damos igual se sobreescribe, concatenar mejor con +=
+                }
+                if(usuario.ApellidoPaterno.Length > 50 || usuario.ApellidoPaterno == "" || usuario.ApellidoPaterno == null)
+                {
+                    resultExcel.ErrorMessage += "El Apellido Paterno es muy largo o está vacío";
+                }
+                if(usuario.ApellidoMaterno.Length > 50)
+                {
+                    resultExcel.ErrorMessage += "El Apellido Materno es muy largo";
+                }
+                if(usuario.Email.Length > 50 || usuario.Email == "" || usuario.Email == null)
+                {
+                    resultExcel.ErrorMessage += "El Email es muy largo o está vacío";
+                }
+                if(usuario.Password == "" || usuario.Password == null)
+                {
+                    resultExcel.ErrorMessage = "El Password está vacío";
+                }
+                if (usuario.FechaNacimiento == "" || usuario.FechaNacimiento == null)
+                {
+                    resultExcel.ErrorMessage += "La fecha de Nacimiento está vacía";
+                }
+                if(usuario.Sexo.Length >= 2 || usuario.Sexo == "" || usuario.Sexo == null)
+                {
+                    resultExcel.ErrorMessage += "El Sexo debe tener un solo caracter o no ser vacío";
+                }
+                if(usuario.Telefono.Length >= 11 || usuario.Telefono == "" || usuario.Telefono == null)
+                {
+                    resultExcel.ErrorMessage += "El Telefono es mayor a 10 digitos o está vacío";
+                }
+                contador++;
+            }
+            return resultExcel;
         }
 
         //Métodos con LINQ
