@@ -14,7 +14,7 @@
 <!--Ocultar la busqueda usando COLLAPSE-->
 <p>                                                                                     <!--Nombre del Id del DIV-->
     <button type="button" data-bs-toggle="collapse" class="btn btn-dark mt-3" data-bs-target="#DivBusquedaAbierta">Busqueda Abierta</button>
-    <button type="button" data-bs-toggle="collapse" class="btn btn-secondary mt-3" data-bs-target="#extraView">Otro botón</button>
+    <button type="button" data-bs-toggle="collapse" class="btn btn-secondary mt-3" data-bs-target="#extraView">Carga Masiva</button>
 </p>
 
 <!-- Escribir un ID para llamarlo desde el botón de arriba-->
@@ -48,14 +48,22 @@
     </div>
 </div>
 
-<!-- Sección Extra (Otra vista) -->
+<!-- Carga Masiva -->
 <div id="extraView" class="collapse multi-section">
     <div class="card p-3 bg-light shadow-sm">
         @using (Html.BeginForm("CargaMasiva", "Usuario", FormMethod.Post, new { @enctype = "multipart/form-data" }))
         {
-    <input type="file" name="inptExcel" id="inptExcel" onchange="validarExtensionExcel()" accept=".xlsx" />
-    <button type="submit" class="btn btn-dark mt-3" onclick="return validarRegistro()"> Enviar</button>
+            if (Session["RutaExcel"] == null)
+            {
+                <input type="file" name="inptExcel" id="inptExcel" onchange="validarExtensionExcel()" accept=".xlsx" />
+                <button type="submit" class="btn btn-dark mt-3" onclick="return validarArchivo()"> Validar Registro</button>
             }
+            else
+            {
+                <button type="submit" class="btn btn-dark mt-3">INSERTAR</button>
+            }
+
+        }
     </div>
 </div>
 
@@ -224,11 +232,11 @@ else
         }
     }
 
-    function validarRegistro() {
+    function validarArchivo() {
         var input = document.getElementById('inptExcel');
         var errorMessage = input.parentNode.querySelector("Error");
         if (input.files.length > 0) {
-            alert('Archivo cargado correctamente');
+            alert('Archivo cargado correctamente, se validará');
         }
         else {
             console.log('No metiste nada');

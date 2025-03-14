@@ -961,16 +961,49 @@ namespace BL
                                 usuario.Telefono = row[8].ToString();
                                 usuario.Celular = row[9].ToString();
                                 usuario.CURP = row[10].ToString();
-                                usuario.Rol.IdRol = Convert.ToUInt16(row[11]);
+
+                                if (row[11] == DBNull.Value || string.IsNullOrEmpty(row[11].ToString()))
+                                {
+                                    usuario.Rol.IdRol = 0;
+                                }
+                                else
+                                {
+                                    usuario.Rol.IdRol = Convert.ToUInt16(row[11]);
+                                }
+
+                                
 
                                 //Direción
                                 usuario.Direccion.Calle = row[12].ToString();
                                 usuario.Direccion.NumeroInterior = row[13].ToString();
                                 usuario.Direccion.NumeroExterior = row[14].ToString();
-                                usuario.Direccion.Colonia.Municipio.Estado.IdEstado = Convert.ToUInt16(row[15]);
-                                usuario.Direccion.Colonia.Municipio.IdMunicipio = Convert.ToUInt16(row[16]); 
-                                usuario.Direccion.Colonia.IdColonia = Convert.ToUInt16(row[17]);
-                                
+
+                                if (row[15] == DBNull.Value || string.IsNullOrEmpty(row[15].ToString()))
+                                {
+                                    usuario.Direccion.Colonia.Municipio.Estado.IdEstado = 0;
+                                }
+                                else
+                                {
+                                    usuario.Direccion.Colonia.Municipio.Estado.IdEstado = Convert.ToUInt16(row[15]);
+                                }
+
+                                if (row[16] == DBNull.Value || string.IsNullOrEmpty(row[16].ToString()))
+                                {
+                                    usuario.Direccion.Colonia.Municipio.IdMunicipio = 0;
+                                }
+                                else
+                                {
+                                    usuario.Direccion.Colonia.Municipio.IdMunicipio = Convert.ToUInt16(row[16]);
+                                }
+
+                                if (row[17] == DBNull.Value || string.IsNullOrEmpty(row[17].ToString()))
+                                {
+                                    usuario.Direccion.Colonia.IdColonia = 0;
+                                }
+                                else
+                                {
+                                    usuario.Direccion.Colonia.IdColonia = Convert.ToUInt16(row[17]);
+                                }
 
                                 result.Objects.Add(usuario);
                             }
@@ -991,52 +1024,224 @@ namespace BL
 
         public static ML.ResultExcel ValidarExcel(List<object> registros) //result.Objects Lee el excel
         {
-            ML.ResultExcel resultExcel = new ML.ResultExcel();
-            int contador = 1; //Para que el usuario entienda ya que nosotros sabemos que comienza en 0
+            ML.ResultExcel result = new ML.ResultExcel();
+            result.Errores = new List<object>(); //Instanciar la lista de errores
+            int contador = 2; //Para que el usuario entienda ya que nosotros sabemos que comienza en 0
 
-            foreach(ML.Usuario usuario in  registros)
+            foreach (ML.Usuario usuario in registros)
             {
+                ML.ResultExcel resultExcel = new ML.ResultExcel();
                 //validar solo lenght vacio y nulo.
                 //Cuando comience a evaluar el registro
-                resultExcel.NumeroRegistro = contador;
+                result.NumeroRegistro = contador;
 
                 //Validar la longitud del Nombre
-                if(usuario.Nombre.Length > 50 || usuario.Nombre == "" || usuario.Nombre == null)
+                if (usuario.UserName.Length > 50 || usuario.UserName == "" || usuario.UserName == null)
                 {
-                    resultExcel.ErrorMessage += "El nombre es muy largo o es vacío"; //+= porque ErrorMessage (puede) ya traer algo guardado, y si solo le damos igual se sobreescribe, concatenar mejor con +=
+                    resultExcel.ErrorMessage = "•Error en A, " + contador + ": El UserName es muy largo o está vacío."; 
+                    result.Errores.Add(resultExcel.ErrorMessage);
                 }
-                if(usuario.ApellidoPaterno.Length > 50 || usuario.ApellidoPaterno == "" || usuario.ApellidoPaterno == null)
+                if (usuario.Nombre.Length > 50 || usuario.Nombre == "" || usuario.Nombre == null)
                 {
-                    resultExcel.ErrorMessage += "El Apellido Paterno es muy largo o está vacío";
+                    resultExcel.ErrorMessage = "•Error en B, " + contador + ": El Nombre es muy largo o está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
                 }
-                if(usuario.ApellidoMaterno.Length > 50)
+                if (usuario.ApellidoPaterno.Length > 50 || usuario.ApellidoPaterno == "" || usuario.ApellidoPaterno == null)
                 {
-                    resultExcel.ErrorMessage += "El Apellido Materno es muy largo";
+                    resultExcel.ErrorMessage = "•Error en C, " + contador + ": El Apellido es muy largo o está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
                 }
-                if(usuario.Email.Length > 50 || usuario.Email == "" || usuario.Email == null)
+                if (usuario.ApellidoMaterno.Length > 50)
                 {
-                    resultExcel.ErrorMessage += "El Email es muy largo o está vacío";
+                    resultExcel.ErrorMessage = "•Error en D, " + contador + ": El Apellido Materno es muy largo.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
                 }
-                if(usuario.Password == "" || usuario.Password == null)
+                if (usuario.Email.Length > 50 || usuario.Email == "" || usuario.Email == null)
                 {
-                    resultExcel.ErrorMessage = "El Password está vacío";
+                    resultExcel.ErrorMessage = "•Error en E, " + contador + ": El Email es muy largo o está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+                if (usuario.Password == "" || usuario.Password == null)
+                {
+                    resultExcel.ErrorMessage = "•Error en F, " + contador + ": El Password está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
                 }
                 if (usuario.FechaNacimiento == "" || usuario.FechaNacimiento == null)
                 {
-                    resultExcel.ErrorMessage += "La fecha de Nacimiento está vacía";
+                    resultExcel.ErrorMessage = "•Error en G, " + contador + ": La fecha de Nacimiento está vacía.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
                 }
-                if(usuario.Sexo.Length >= 2 || usuario.Sexo == "" || usuario.Sexo == null)
+                if (usuario.Sexo.Length > 2 || usuario.Sexo == "" || usuario.Sexo == null)
                 {
-                    resultExcel.ErrorMessage += "El Sexo debe tener un solo caracter o no ser vacío";
+                    resultExcel.ErrorMessage = "•Error en H, " + contador + ": El Sexo debe tener un solo caracter o no ser vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
                 }
-                if(usuario.Telefono.Length >= 11 || usuario.Telefono == "" || usuario.Telefono == null)
+                if (usuario.Telefono.Length > 10 || usuario.Telefono == "" || usuario.Telefono == null)
                 {
-                    resultExcel.ErrorMessage += "El Telefono es mayor a 10 digitos o está vacío";
+                    resultExcel.ErrorMessage = "•Error en I, " + contador + ": El Telefono es mayor a 10 digitos o está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
                 }
+                if (usuario.Celular.Length > 10)
+                {
+                    resultExcel.ErrorMessage = "•Error en J, " + contador + ": El Celular es mayor a 10 digitos.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+                if (usuario.CURP.Length != 18 || usuario.CURP == "" || usuario.CURP == null)
+                {
+                    resultExcel.ErrorMessage = "•Error en K, " + contador + ": LA CURP debe tener 18 digitos o está vacía.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+                if (usuario.Rol.IdRol == 0 || usuario.Rol.IdRol > 5)
+                {
+                    resultExcel.ErrorMessage = "•Error en L, " + contador + ": El IdRol es invalido o está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+                if (usuario.Direccion.Calle.Length > 50 || usuario.Direccion.Calle == "" || usuario.Direccion.Calle == null)
+                {
+                    resultExcel.ErrorMessage = "•Error en M, " + contador + ": La Calle es mayor a 50 digitos o está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+                if (usuario.Direccion.NumeroInterior.Length > 5 || usuario.Direccion.NumeroInterior == "" || usuario.Direccion.NumeroInterior == null)
+                {
+                    resultExcel.ErrorMessage = "•Error en N, " + contador + ": El Numero Interior es muy largo o está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+                if (usuario.Direccion.NumeroExterior.Length > 5 || usuario.Direccion.NumeroExterior == "" || usuario.Direccion.NumeroExterior == null)
+                {
+                    resultExcel.ErrorMessage = "•Error en O, " + contador + ": El Numero Exterior es muy largo o está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+                if (usuario.Direccion.Colonia.Municipio.Estado.IdEstado == 0)
+                {
+                    resultExcel.ErrorMessage = "•Error en P, " + contador + ": El IdEstado es invalido o está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+                if (usuario.Direccion.Colonia.Municipio.IdMunicipio == 0)
+                {
+                    resultExcel.ErrorMessage = "•Error en Q, " + contador + ": El IdMunicipio es invalido o está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+                if (usuario.Direccion.Colonia.IdColonia == 0)
+                {
+                    resultExcel.ErrorMessage = "•Error en R, " + contador + ": El IdColonia es invalido o está vacío.";
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+
+                /*
+                //Si el ErrorMessage es diferente a vacio
+                if (resultExcel.ErrorMessage != null)
+                {
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+                */
+
                 contador++;
+
             }
-            return resultExcel;
+            return result;
         }
+
+        /*public static ML.ResultExcel ValidarExcel(List<object> registros) //result.Objects Lee el excel
+        {
+            ML.ResultExcel result = new ML.ResultExcel();
+            result.Errores = new List<object>(); //Instanciar la lista de errores
+            int contador = 2; //Para que el usuario entienda ya que nosotros sabemos que comienza en 0
+
+            foreach (ML.Usuario usuario in registros)
+            {
+                ML.ResultExcel resultExcel = new ML.ResultExcel();
+                //validar solo lenght vacio y nulo.
+                //Cuando comience a evaluar el registro
+                result.NumeroRegistro = contador;
+
+                //Validar la longitud del Nombre
+                if (usuario.UserName.Length > 50 || usuario.UserName == "" || usuario.UserName == null)
+                {
+                    resultExcel.ErrorMessage += "•Error en A, " + contador + ": El UserName es muy largo o está vacío."; //+= porque ErrorMessage (puede) ya traer algo guardado, y si solo le damos igual se sobreescribe, concatenar mejor con +=
+                }
+                if (usuario.Nombre.Length > 50 || usuario.Nombre == "" || usuario.Nombre == null)
+                {
+                    resultExcel.ErrorMessage += "•Error en B, " + contador + ": El Nombre es muy largo o está vacío."; //+= porque ErrorMessage (puede) ya traer algo guardado, y si solo le damos igual se sobreescribe, concatenar mejor con +=
+                }
+                if(usuario.ApellidoPaterno.Length > 50 || usuario.ApellidoPaterno == "" || usuario.ApellidoPaterno == null)
+                {
+                    resultExcel.ErrorMessage += "•Error en C, " + contador + ": El Apellido es muy largo o está vacío.";
+                }
+                if(usuario.ApellidoMaterno.Length > 50)
+                {
+                    resultExcel.ErrorMessage += "•Error en D, " + contador + ": El Apellido Materno es muy largo.";
+                }
+                if(usuario.Email.Length > 50 || usuario.Email == "" || usuario.Email == null)
+                {
+                    resultExcel.ErrorMessage += "•Error en E, " + contador + ": El Email es muy largo o está vacío.";
+                }
+                if(usuario.Password == "" || usuario.Password == null)
+                {
+                    resultExcel.ErrorMessage = "•Error en F, " + contador + ": El Password está vacío.";
+                }
+                if (usuario.FechaNacimiento == "" || usuario.FechaNacimiento == null)
+                {
+                    resultExcel.ErrorMessage += "\nError en G, " + contador + ": La fecha de Nacimiento está vacía.";
+                }
+                if(usuario.Sexo.Length > 2 || usuario.Sexo == "" || usuario.Sexo == null)
+                {
+                    resultExcel.ErrorMessage += "•Error en H, " + contador + ": El Sexo debe tener un solo caracter o no ser vacío.";
+                }
+                if(usuario.Telefono.Length > 10 || usuario.Telefono == "" || usuario.Telefono == null)
+                {
+                    resultExcel.ErrorMessage += "•Error en I, " + contador + ": El Telefono es mayor a 10 digitos o está vacío.";
+                }
+                if (usuario.Celular.Length > 10)
+                {
+                    resultExcel.ErrorMessage += "•Error en J, " + contador + ": El Celular es mayor a 10 digitos.";
+                }
+                if (usuario.CURP.Length !=18 || usuario.CURP == "" || usuario.CURP == null)
+                {
+                    resultExcel.ErrorMessage += "\nError en K, " + contador + ": LA CURP debe tener 18 digitos o está vacía.";
+                }
+                if (usuario.Rol.IdRol == 0 || usuario.Rol.IdRol > 5 )
+                {
+                    resultExcel.ErrorMessage += "•Error en L, " + contador + ": El IdRol es invalido o está vacío.";
+                }
+                if (usuario.Direccion.Calle.Length > 50 || usuario.Direccion.Calle == "" || usuario.Direccion.Calle == null)
+                {
+                    resultExcel.ErrorMessage += "•Error en M, " + contador + ": La Calle es mayor a 50 digitos o está vacío.";
+                }
+                if (usuario.Direccion.NumeroInterior.Length > 5 || usuario.Direccion.NumeroInterior == "" || usuario.Direccion.NumeroInterior == null)
+                {
+                    resultExcel.ErrorMessage += "•Error en N, " + contador + ": El Numero Interior es muy largo o está vacío.";
+                }
+                if (usuario.Direccion.NumeroExterior.Length > 5 || usuario.Direccion.NumeroExterior == "" || usuario.Direccion.NumeroExterior == null)
+                {
+                    resultExcel.ErrorMessage += "•Error en O, " + contador + ": El Numero Exterior es muy largo o está vacío.";
+                }
+                if (usuario.Direccion.Colonia.Municipio.Estado.IdEstado == 0)
+                {
+                    resultExcel.ErrorMessage += "•Error en P, " + contador + ": El IdEstado es invalido o está vacío.";
+                }
+                if (usuario.Direccion.Colonia.Municipio.IdMunicipio == 0)
+                {
+                    resultExcel.ErrorMessage += "•Error en Q, " + contador + ": El IdMunicipio es invalido o está vacío.";
+                }
+                if (usuario.Direccion.Colonia.IdColonia == 0)
+                {
+                    resultExcel.ErrorMessage += "Error en R, " + contador + ": El IdColonia es invalido o está vacío.";
+                }
+
+
+                //Si el ErrorMessage es diferente a vacio
+                if (resultExcel.ErrorMessage != null )
+                {
+                    result.Errores.Add(resultExcel.ErrorMessage);
+                }
+                
+
+
+                contador++;
+
+            }
+            return result;
+        }*/
 
         //Métodos con LINQ
         /*public static ML.Result Add(ML.Usuario usuario)

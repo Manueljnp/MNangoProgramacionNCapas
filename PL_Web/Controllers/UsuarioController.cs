@@ -187,53 +187,107 @@ namespace PL_Web.Controllers
         [HttpPost]
         public ActionResult CargaMasiva()
         {
-            HttpPostedFileBase excelUsuario = Request.Files["inptExcel"];
-
-            string extensionPermitida = ".xlsx";
-            
-            if(excelUsuario.ContentLength > 0)
+            if (Session["RutaExcel"] == null)
             {
-                string extensionObtenida = Path.GetExtension(excelUsuario.FileName);
-                if (extensionObtenida == extensionPermitida)
+                //La primera vez que voy a ller y validar un excel
+                HttpPostedFileBase excelUsuario = Request.Files["inptExcel"];
+
+                string extensionPermitida = ".xlsx";
+
+                if (excelUsuario.ContentLength > 0) //El usuario si me dio un archivo
                 {
-                    //Primero crear carpeta para guardar copias del archivo (PL_Web>Add>Carpeta>CargaMasiva)
-
-                    //Ruta Relativa, guardar ahí el archivo concatenando fecha, hora, etc.
-                    string ruta = Server.MapPath("~/CargaMasiva/") +
-                        Path.GetFileNameWithoutExtension(excelUsuario.FileName) +
-                        "-" + DateTime.Now.ToString("ddMMyyyyHmmssff") + ".xlsx";
-
-                    if(!System.IO.File.Exists(ruta))    //Pegar la cadena de conexión de OLEDB (Web.config)
+                    string extensionObtenida = Path.GetExtension(excelUsuario.FileName);
+                    if (extensionObtenida == extensionPermitida)
                     {
-                        excelUsuario.SaveAs(ruta);
-                        string cadenaConexion = ConfigurationManager.ConnectionStrings["OleDbConnection"]+ruta;
+                        //Primero crear carpeta para guardar copias del archivo (PL_Web>Add>Carpeta>CargaMasiva)
 
-                        ML.Result resultExcel = BL.Usuario.LeerExcel(cadenaConexion);
+                        //Ruta Relativa, guardar ahí el archivo concatenando fecha, hora, etc.
+                        string ruta = Server.MapPath("~/CargaMasiva/") +
+                            Path.GetFileNameWithoutExtension(excelUsuario.FileName) +
+                            "-" + DateTime.Now.ToString("ddMMyyyyHmmssff") + ".xlsx";
 
-                        if(resultExcel.Objects.Count > 0) //Si el objeto trae más de 1 entonces ¿si los trae?
+                        if (!System.IO.File.Exists(ruta))    //Pegar la cadena de conexión de OLEDB (Web.config)
                         {
-                            Console.WriteLine(resultExcel.Objects);
+                            excelUsuario.SaveAs(ruta);
+                            string cadenaConexion = ConfigurationManager.ConnectionStrings["OleDbConnection"] + ruta;
+
+                            ML.Result resultExcel = BL.Usuario.LeerExcel(cadenaConexion);
+
+                            if (resultExcel.Objects.Count > 0) //Si el objeto trae más de 1 entonces o leyó y capturó datos
+                            {
+                                ML.ResultExcel resultValidacion = BL.Usuario.ValidarExcel(resultExcel.Objects); //Validar, le mandamos la lista de Objetos
+
+                                if (resultValidacion.Errores.Count > 0) //Si la lista de Errores es mayor a cero (hay errores)
+                                {
+                                    //hubo un error (mostrar una vista, una tabla)
+                                    //ViewBag=> Es una variable que se pasa de un CONTROLADOR a una VISTA
+                                    //Si el ViewBag se lee en la VISTA, el valor se DESTRUYE
+                                    ViewBag.ErroresExcel = resultValidacion.Errores; //Ahora ir a la vista a colocar el ViewBag (hasta arriba despues del model)
+
+                                    //El error mostrarlo en la vista Modal:
+                                    return PartialView("_Modal");
+                                }
+                                else
+                                {
+                                    //Session en C# => variable global, vive 60 min (determinado) en todo el proyecto
+                                    Session["RutaExcel"] = ruta;
+                                    return PartialView("_Modal");
+                                }
+                            }
+                            else
+                            {
+                                ViewBag.ErrorMensaje = "Hola";
+                                return PartialView("_Modal");
+                            }
                         }
                         else
                         {
-
+                            //Vista Parcial (vuelve a cargar el archivo, porque ya existe)
+                            ViewBag.ErrorMensaje = "Hola2";
+                            return PartialView("_Modal");
                         }
                     }
                     else
                     {
-                        //Vista Parcial (vuelve a cargar el archivo, porque ya existe)
+                        //Vista Parcial (El archivo no es un Excel)
                     }
                 }
                 else
                 {
-                    //Vista Parcial (El archivo no es un Excel)
+                    //Vistas parciales (No me diste ningún archivo)
+
                 }
             }
             else
             {
-                //Vistas parciales (No me diste ningún archivo)
+                //Ya leí y validé un excel
+                //INSERTAR
+                string cadenaConexion = ConfigurationManager.ConnectionStrings["OleDbConnection"] + Session["RutaExcel"].ToString();
 
+                ML.Result resultLeer = BL.Usuario.LeerExcel(cadenaConexion);
+
+                if (resultLeer.Objects.Count > 0)
+                {
+                    //Todo lo leyó bien
+                    foreach (ML.Usuario usuario in resultLeer.Objects)
+                    {
+                        ML.Result resultInsertar = BL.Usuario.Add(usuario);
+                        if(!resultInsertar.Correct)
+                        {
+                            //mostrar el error que salió
+                        }
+                    }
+                    //cuantos Insertes fueron Correctos y cuantos Incorrectos
+                    //Cuales estuvieron mal
+                }
+                else
+                {
+                    //error
+                }
             }
+
+            Session["RutaExcel"] = null; //antes de mandar a la vista, Session dejarla en null para poder usar el método nuevamente
+
             //Devolver a la vista GetAll
             return RedirectToAction("GetAll");
         }

@@ -254,6 +254,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Usuario\GetAll.cshtml" />
     <Content Include="Views\Usuario\Form.cshtml" />
+    <Content Include="Views\Usuario\_Modal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
