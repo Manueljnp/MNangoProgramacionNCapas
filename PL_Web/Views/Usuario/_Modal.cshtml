@@ -13,13 +13,15 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            @if (ViewBag.ErroresExcel == null)
+            <!--if (ViewBag.ErroresExcel == null &&)
             {
-                <div class="alert alert-success" role="alert">
-                    <h5>Excel sin errores</h5>
+                <div class="modal-body">
+                    <div class="alert alert-success" role="alert">
+                        <h5>@@ViewBag.Mensaje</h5>
+                    </div>
                 </div>
-            }
-            else
+            }-->
+            @if (ViewBag.ErroresExcel != null)
             {
                 <div class="table-responsive">
                     <table class="table table-dark table-striped">
@@ -37,6 +39,14 @@
                             }
                         </tbody>
                     </table>
+                </div>
+            }
+            else
+            {
+                <div class="modal-body">
+                    <div class="alert alert-success" role="alert">
+                        <h5>@ViewBag.Mensaje</h5>
+                    </div>
                 </div>
             }
             <div class="modal-footer">

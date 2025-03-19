@@ -26,7 +26,7 @@ namespace PL_Web.Controllers
             usuario.Rol.IdRol = 0;
 
             ML.Result resultDDL = BL.Rol.GetAll();
-            
+
             usuario.Rol.Roles = resultDDL.Objects;
 
             ML.Result result = BL.Usuario.GetAll(usuario);
@@ -49,14 +49,14 @@ namespace PL_Web.Controllers
         public ActionResult GetAll(ML.Usuario usuario)
         {
             //Relacionar los parametros con los atributos del modelo
-            usuario.Nombre = usuario.Nombre == null ? "" : usuario.Nombre ;
+            usuario.Nombre = usuario.Nombre == null ? "" : usuario.Nombre;
             usuario.ApellidoPaterno = usuario.ApellidoPaterno == null ? "" : usuario.ApellidoPaterno;
             usuario.ApellidoMaterno = usuario.ApellidoMaterno == null ? "" : usuario.ApellidoMaterno;
             usuario.Rol.IdRol = usuario.Rol.IdRol == 0 ? 0 : usuario.Rol.IdRol;
 
             //Llamar al método de BL con los parámetros de busqueda
             ML.Result result = BL.Usuario.GetAll(usuario); //usuario ya tiene los valores que asignamos arriba
-            if(result.Correct)
+            if (result.Correct)
             {
                 usuario.Usuarios = result.Objects; //Mostrar la lista De Usuarios
             }
@@ -117,15 +117,65 @@ namespace PL_Web.Controllers
             return View(usuario);
         }
 
-        [HttpPost]  //Este es para Agregar y Actualizar
+        [HttpPost]  //Este es para Agregar y Actualizar (Validaciones DATA ANNOTATION)
         public ActionResult Form(ML.Usuario usuario)
         {
+            if (ModelState.IsValid)
+            {
+                // Validation success.
+            }
+            else
+            {
+                //ML.Usuario usuario = new ML.Usuario(); //Usuario es vacío
+
+                usuario.Direccion = new ML.Direccion(); //Inicializar la propiedad Dirección
+                usuario.Direccion.Colonia = new ML.Colonia(); //Inicializar la propiedad Colonia
+                usuario.Direccion.Colonia.Municipio = new ML.Municipio(); //Inicializar la propiedad Municipio
+                usuario.Direccion.Colonia.Municipio.Estado = new ML.Estado(); //Inicializar la propiedad Estado
+
+                //Condición para mostrar ROL
+                if (usuario.IdUsuario == null)
+                {
+                    usuario.Rol = new ML.Rol();
+                }
+                else
+                {
+                    ML.Result result = BL.Usuario.GetById(usuario.IdUsuario);
+                    usuario = (ML.Usuario)result.Object;
+
+                    ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
+                    usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
+
+                    ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
+                    usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
+                }
+
+                //Verificar que la propiedad Estado esté inicializado antes de asignar el resultado
+                if (usuario.Direccion?.Colonia?.Municipio?.Estado != null)
+                {
+                    ML.Result resultEstado = BL.Estado.GetAll();
+                    usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstado.Objects;
+                }
+
+                //Obtener los Roles
+                ML.Result resultRoles = BL.Rol.GetAll();
+                usuario.Rol.Roles = resultRoles.Objects;
+
+                //ML.Result resultEstados = BL.Estado.GetAll();
+                //usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstados.Objects;
+
+                //suario.Rol = new ML.Rol();
+                return View(usuario);
+            }
+
+            string mensaje = "";
             //Obtener el archivo de la Imagen:      Nombre del input (o el id?)
             HttpPostedFileBase file = Request.Files["inptFileImagen"];
-            if(file != null /*&& file.ContentLength > 0*/)
+            if (file != null /*&& file.ContentLength > 0*/)
             {
                 usuario.Imagen = ConvertirAArrayBytes(file);
             }
+
             /*else
             {
                 //Si no selecciona una nueva imagen, mantener la imagen acctual
@@ -139,14 +189,19 @@ namespace PL_Web.Controllers
             {
                 //ADD CON DIRECCION (Cambiar a 'ADD' al finalizar pruebas) **************************************************************
                 BL.Usuario.Add(usuario);
+                mensaje = "Usuario agregado correctamente";
             }
             else
             {
                 //UPDATE
                 BL.Usuario.Update(usuario);
+                mensaje = "Usuario actualizado correctamente";
 
             }
-            return RedirectToAction("GetAll");
+
+            ViewBag.Mensaje = mensaje;
+            return PartialView("_Partial");
+
         }
 
         [HttpGet]
@@ -160,7 +215,7 @@ namespace PL_Web.Controllers
         public JsonResult CambioEstatus(int IdUsuario, bool Estatus)
         {
             ML.Result JsonResult = BL.Usuario.CambioEstatus(IdUsuario, Estatus);
-            return Json (JsonResult, JsonRequestBehavior.AllowGet);
+            return Json(JsonResult, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -187,6 +242,7 @@ namespace PL_Web.Controllers
         [HttpPost]
         public ActionResult CargaMasiva()
         {
+            string mensaje = "";
             if (Session["RutaExcel"] == null)
             {
                 //La primera vez que voy a ller y validar un excel
@@ -231,6 +287,8 @@ namespace PL_Web.Controllers
                                 {
                                     //Session en C# => variable global, vive 60 min (determinado) en todo el proyecto
                                     Session["RutaExcel"] = ruta;
+                                    mensaje = "Excel sin errores";
+                                    ViewBag.Mensaje = mensaje;
                                     return PartialView("_Modal");
                                 }
                             }
@@ -243,19 +301,25 @@ namespace PL_Web.Controllers
                         else
                         {
                             //Vista Parcial (vuelve a cargar el archivo, porque ya existe)
-                            ViewBag.ErrorMensaje = "Hola2";
+                            ViewBag.ErrorMensaje = "Vuelva a cargar el archivo, porque ya existe";
                             return PartialView("_Modal");
                         }
                     }
                     else
                     {
                         //Vista Parcial (El archivo no es un Excel)
+                        mensaje = "El archivo no es un excel";
+                        ViewBag.Mensaje = mensaje;
+                        return PartialView("_Modal");
+
                     }
                 }
                 else
                 {
                     //Vistas parciales (No me diste ningún archivo)
-
+                    mensaje = "No seleccionó ningún archivo";
+                    ViewBag.Mensaje = mensaje;
+                    return PartialView("_Modal");
                 }
             }
             else
@@ -272,9 +336,13 @@ namespace PL_Web.Controllers
                     foreach (ML.Usuario usuario in resultLeer.Objects)
                     {
                         ML.Result resultInsertar = BL.Usuario.Add(usuario);
-                        if(!resultInsertar.Correct)
+                        if (!resultInsertar.Correct)
                         {
+                            Session["RutaExcel"] = null;
                             //mostrar el error que salió
+                            mensaje = "El archivo contiene datos duplicados, no se insertará";
+                            ViewBag.Mensaje = mensaje;
+                            return PartialView("_Modal");
                         }
                     }
                     //cuantos Insertes fueron Correctos y cuantos Incorrectos
@@ -283,6 +351,9 @@ namespace PL_Web.Controllers
                 else
                 {
                     //error
+                    mensaje = "Ocurrió un error y no se insertó";
+                    ViewBag.Mensaje = mensaje;
+                    return PartialView("_Modal");
                 }
             }
 
