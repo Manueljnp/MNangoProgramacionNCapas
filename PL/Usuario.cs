@@ -175,13 +175,14 @@ namespace PL
         public static ML.Result CargaMasiva()
         {
             ML.Result result = new ML.Result();
-            Console.WriteLine("Carga Masiva");
+            //Console.WriteLine("Carga Masiva");
             string ruta = @"C:\Users\digis\Documents\Manuel de Jesus Nango Ponce\datosPrueba.txt";
             try
             {
                 StreamReader streamReader = new StreamReader(ruta);
                 string fila = "";
-                while((fila = streamReader.ReadLine()) != null)
+
+                while ((fila = streamReader.ReadLine()) != null)
                 {
                     Console.WriteLine(fila);
                 }
