@@ -12,7 +12,6 @@
 <h2>Usuario</h2>
 <!--Poner este evento enctype para envíar archivos al controlador-->
 @using (Html.BeginForm("Form", "Usuario", FormMethod.Post, new
-{ @enctype = "multipart/form-data" })) //Onsubmit para saber si...
 {
     @enctype = "multipart/form-data",
     @onsubmit = "validarFormulario(event)"
@@ -28,6 +27,7 @@
             <div class="col">
                 @Html.LabelFor(model => model.UserName, new { @class = "form-label text-dark fw-bold" })
                 @Html.TextBoxFor(model => model.UserName, new { @class = "form-control rounded-pill", @onblur = "validarVacio(event)", @id = "inptUserName" })
+
                 @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
             </div>
             <div class="col">
@@ -35,11 +35,11 @@
                 @Html.TextBoxFor(model => model.Nombre, new
                 {
                     @class = "form-control rounded-pill",
-                    @onkeypress = "SoloLetras(event)",
-                    @onblur = "BorrarMensaje(event)",
+                    /*@onkeypress = "SoloLetras(event)", @onblur="BorrarMensaje(event)",*/
                     @id = "idNombre"
                 }) <!--ONKEYPRESS=> detecta la tecla presionada (evento)-->
                 <span class="error"></span>
+
                 @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
             </div>
             <div class="col">
@@ -47,7 +47,7 @@
                 @Html.TextBoxFor(model => model.ApellidoPaterno, new
                 {
                     @class = "form-control rounded-pill",
-               @onkeypress = "SoloLetras(event)",
+                    @onkeypress = "SoloLetras(event)",
                     @onblur = "BorrarMensaje(event)"
                 })
                 <span class="error"></span>
@@ -57,9 +57,8 @@
                 @Html.LabelFor(model => model.ApellidoMaterno, new { @class = "form-label text-dark fw-bold" })
                 @Html.TextBoxFor(model => model.ApellidoMaterno, new
                 {
-                    data_optional = "true",
                     @class = "form-control rounded-pill",
-               @onkeypress = "SoloLetras(event)",
+                    @onkeypress = "SoloLetras(event)",
                     @onblur = "BorrarMensaje(event)"
                 })
                 <span class="error"></span>
@@ -82,19 +81,10 @@
             <div class="col">
                 @Html.LabelFor(model => model.Password, new { @class = "form-label text-dark fw-bold" })
                 @Html.TextBoxFor(model => model.Password, new
-           {
-               @class = "form-control rounded-pill",
-               @type = "password",
-               @id = "inptPassword",
-               @onblur = "validarPasswordRegex(event)"
-           })
-                <span class="error"></span>
-
-                @Html.TextBoxFor(model => model.Password, new
                 {
                     @class = "form-control rounded-pill",
                     @type = "password",
-                @id = "inptPassword"
+                    @id = "inptPassword"
                 })
                 @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
             </div>
@@ -139,7 +129,6 @@
                 @Html.LabelFor(model => model.Telefono, new { @class = "form-label text-dark fw-bold" })
                 @Html.TextBoxFor(model => model.Telefono, new
                 {
-                    data_optional = "true",
                     @class = "form-control rounded-pill",
                     @onkeypress = "validarNumerosCaracter(event)",
                     @onkeyup = "validarNumerosCadena(event)",
@@ -152,7 +141,6 @@
                 @Html.LabelFor(model => model.Celular, new { @class = "form-label text-dark fw-bold" })
                 @Html.TextBoxFor(model => model.Celular, new
                 {
-                    data_optional = "true",
                     @class = "form-control rounded-pill",
                     @onkeypress = "validarNumerosCaracter(event)",
                     @onkeyup = "validarNumerosCadena(event)",
@@ -165,7 +153,6 @@
                 @Html.LabelFor(model => model.CURP, new { @class = "form-label text-dark fw-bold" })
                 @Html.TextBoxFor(model => model.CURP, new
                 {
-                    data_optional = "true",
                     @class = "form-control rounded-pill",
                     @onkeyup = "validarCURP(event)",
                     @onblur = "BorrarMensaje(event)"
@@ -183,9 +170,8 @@
 
                 @Html.LabelFor(model => model.Rol.IdRol, new { @class = "form-label text-dark fw-bold" })
                 <!-- Nueva lista que está en el Modelo Rol y se llama Roles -->
-                @Html.DropDownListFor(model => model.Rol.IdRol, new SelectList(Model.Rol.Roles, "IdRol", "Nombre"), "Selecciona un Rol", new { @class = "form-control", @onblur="BorrarMensaje(event)" })
+                @Html.DropDownListFor(model => model.Rol.IdRol, new SelectList(Model.Rol.Roles, "IdRol", "Nombre"), "Selecciona un Rol", new { @class = "form-control" })
                 <!--IdRol=Nombre de la propiedad, Nombre=Lo que va a ver el usuario-->
-                <span class="error"></span>
             </div>
         </div>
     </div>
@@ -207,11 +193,6 @@
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.Direccion.NumeroInterior, new { @class = "form-label text-dark fw-bold" })
-                @Html.TextBoxFor(model => model.Direccion.NumeroInterior, new { @class = "form-control rounded-pill", data_optional = "true",
-               @onkeypress = "validarNumerosCaracter(event)",
-               @onkeyup = "validarNumerosCadenaDireccion(event)",
-               @onblur = "BorrarMensaje(event)"})
-                <span class="error"></span>
                 @Html.TextBoxFor(model => model.Direccion.NumeroInterior, new { @class = "form-control rounded-pill" })
                 @Html.ValidationMessageFor(model => model.Direccion.NumeroInterior, "", new { @class = "text-danger" })
             </div>
@@ -219,21 +200,14 @@
                 @Html.LabelFor(model => model.Direccion.NumeroExterior, new { @class = "form-label text-dark fw-bold" })
                 @Html.TextBoxFor(model => model.Direccion.NumeroExterior, new { @class = "form-control rounded-pill" })
                 @Html.ValidationMessageFor(model => model.Direccion.NumeroExterior, "", new { @class = "text-danger" })
-                @Html.TextBoxFor(model => model.Direccion.NumeroExterior, new { @class = "form-control rounded-pill",
-               @onkeypress = "validarNumerosCaracter(event)",
-               @onkeyup = "validarNumerosCadenaDireccion(event)",
-               @onblur = "BorrarMensaje(event)"})
-                <span class="error"></span>
             </div>
         </div>
         <div class="row">
             <div class="col">
                 @Html.LabelFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, new { @class = "form-label text-dark fw-bold" })
                 @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, new SelectList(Model.Direccion.Colonia.Municipio.Estado.Estados, "IdEstado", "Nombre"),
-               "Selecciona el Estado", new { @onchange = "MunicipioGetByIdEstado()", @id = "ddlEstado", @class = "form-control" })
+                    "Selecciona el Estado", new { @onchange = "MunicipioGetByIdEstado()", @id = "ddlEstado", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, "", new { @class = "text-danger" })
-               "Selecciona el Estado", new { @onchange = "MunicipioGetByIdEstado()", @id = "ddlEstado", @class = "form-control", @onblur = "BorrarMensaje(event)" })
-                <span class="error"></span>
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new { @class = "form-label text-dark fw-bold" })
@@ -241,17 +215,14 @@
                 @if (Model.Direccion.Colonia.Municipio.Municipios != null)
                 {
                     @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new SelectList(Model.Direccion.Colonia.Municipio.Municipios, "IdMunicipio", "Nombre"),
-                   "Selecciona un Municipio",
-                    new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control" })
-                    
+                        "Selecciona un Municipio",
+                         new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control" })
                 }
-                else //Para AGREGAR
+                else
                 {
                     @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new SelectList(String.Empty), "Selecciona un Municipio",
-                   new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control" })
+                        new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, "", new { @class = "text-danger" })
-                   new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control", @onblur= "BorrarMensaje(event)" })
-                    <span class="error"></span>
                 }
             </div>
             <div class="col">
@@ -260,16 +231,14 @@
                 @if (Model.Direccion.Colonia.Colonias != null)
                 {
                     @Html.DropDownListFor(model => model.Direccion.Colonia.IdColonia, new SelectList(Model.Direccion.Colonia.Colonias, "IdColonia", "Nombre"),
-                   "Selecciona una Colonia",
-                   new { @id = "ddlColonia", @class = "form-control" })
+                        "Selecciona una Colonia",
+                        new { @id = "ddlColonia", @class = "form-control" })
                 }
-                else //Para AGREGAR
+                else
                 {
                     @Html.DropDownListFor(model => model.Direccion.Colonia.IdColonia, new SelectList(String.Empty), "Selecciona una Colonia",
-                    new { @id = "ddlColonia", @class = "form-control" })
+                         new { @id = "ddlColonia", @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Direccion.Colonia.IdColonia, "", new { @class = "text-danger" })
-                    new { @id = "ddlColonia", @class = "form-control", @onblur = "BorrarMensaje(event)" })
-                    <span class="error"></span>
                 }
             </div>
         </div>
@@ -278,7 +247,7 @@
     <p></p>
     <h2>Imagen del Usuario</h2>
     <div class="mb-3 mt-3 col">
-        <input type="file" accept=".png" name="inptFileImagen" id="inptFileImagen" class="form-control" data-optional="true" onchange="validarExtension(); visualizarImagen(this);" />
+        <input type="file" accept=".png" name="inptFileImagen" id="inptFileImagen" class="form-control" onchange="validarExtension(); visualizarImagen(this);" />
         <!--Poner un Campo Oculto para mantener imagen actual si no se selecciona una nueva
         <input type="hidden" name="ImagenActual" id="ImagenActual" value="Convert.ToBase64String(Model.Imagen)" /> -->
         @if (Model.Imagen == null)
@@ -293,9 +262,12 @@
 
     <div>
         <p></p>
-        <button type="submit" class="btn btn-primary mb-2" name="btnAgregarRegistro" id="btnAgregarRgistro" onchange="validarRegistro();">Agregar Registro</button>
+        <button type="submit" class="btn btn-primary mb-2" name="btnAgregarRegistro" id="btnAgregarRegistro" onchange="validarRegistro();">Agregar Registro</button>
     </div>
 }
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
 
 <!--VARiables para RUTAS Razor-->
 <script>
@@ -317,7 +289,3 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
 <script src="~/Scripts/Usuario/ValidacionesForm.js"></script>
-
-<script>
-    console.log('@Model.Sexo');
-</script>
