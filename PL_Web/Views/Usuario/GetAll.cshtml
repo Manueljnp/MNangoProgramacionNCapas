@@ -12,7 +12,8 @@
 <a href="@Url.Action("Form", "Usuario")" class="btn btn-primary mb-3">Agregar Registro</a>
 
 <!--Ocultar la busqueda usando COLLAPSE-->
-<p>                                                                                     <!--Nombre del Id del DIV-->
+<p>
+    <!--Nombre del Id del DIV-->
     <button type="button" data-bs-toggle="collapse" class="btn btn-dark mt-3" data-bs-target="#DivBusquedaAbierta">Busqueda Abierta</button>
     <button type="button" data-bs-toggle="collapse" class="btn btn-secondary mt-3" data-bs-target="#extraView">Otro botón</button>
 </p>
@@ -198,5 +199,152 @@ else
                 console.log(xhr)
             }   //se ejecuta cuando ajax NO se conectó bien con el método
         })
+    }
+</script>
+
+
+<!--Intento de CRUD solo JS-->
+@@model ML.Usuario
+@@{
+    ViewBag.Title = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Prueba</h1>
+            <h5>CRUD JS</h5>
+        </div>
+        <div class="col-12">
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Agregar
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Agregar Usuario</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="modal-header">
+                                    <label class="gap-lg-2">Nombre</label>
+                                    <input @*type="hidden"*@ id="txtNombre" class="form-control rounded-pill"/>
+                                </div>
+                                <div class="modal-header">
+                                    <label class="gap-lg-2">Apellido Paterno</label>
+                                    <input @*type="hidden"*@ id="txtApellidoPaterno" class="form-control rounded-pill" />
+                                    <label class="gap-lg-2 m-1">Apellido Materno</label>
+                                    <input id="txtApellidoMaterno" class="form-control rounded-pill" />
+                                </div>
+                                <div class="modal-header">
+                                    
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Email</label>
+                                    <input id="txtEmail" class="form-control rounded-pill" />
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table table-responsive mt-4">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Editar</th> <!--64-->
+                            <th>Nombre</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                        <tbody id="tbody">
+
+                        </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--Intentando hacer las funciones-->
+<script src="~/Scripts/jquery-3.7.0.js"></script>
+
+<script>
+    GetAll();
+    function GetAll() {
+        $.ajax({
+            url: '@Url.Action("GetAll", "Alumno")',
+            type: 'GET',
+            dataType: 'JSON',
+            success: function (result) {
+                if (result.Correct) {
+
+                    var usuarios = result.Objects;
+                    var tabla = document.getElementById("tbody");
+                    var row = ``;
+
+                    $.each(usuarios, function (index, usuario) {
+                        var imagen = usuario.ImagenBase64
+                            ? `<img src="data:image/png;base64,${alumno.ImagenBase64} alt=Imagen del usuario"
+                                style="width: 50px; height: 50px;">`
+                            : "No hay imagen";
+
+                        row += `
+                        <tr>
+                            <td><a class="btn btn-warning" onclick="GetById(${alumno.IdUsuario})" >
+                            <i class="bi bi-pencil-square"></i></a></td>
+                            <td>${alumno.Nombre}</td>
+                            <td>${alumno.ApellidoPaterno}</td>
+                            <td></td>
+                            <td><a href="" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar?')">
+                            <i class="bi bi-trash"></i></a></td>
+                        `;
+                    });
+
+                    $('#tbody').empty().append(row);
+                } else {
+                    alert('Error');
+                }
+            }
+        })
+    }
+
+    function OpenForm() {
+        $("#staticBackdrop").modal("show");
+        ClearForm();
+
+    }
+
+    function ClearForm() {
+
+    }
+
+    function Guardar() {
+
+    }
+
+    function UpdateUsuario() {
+
+    }
+
+    function GuardarOActualizar() {
+
+    }
+
+    function GetById(idUsuario) {
+
     }
 </script>

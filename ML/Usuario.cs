@@ -24,6 +24,8 @@ namespace ML
         public bool Estatus { get; set; }
         public string CURP { get; set; }
         public byte[] Imagen { get; set; }
+
+        public string ImagenBase64 { get; set; }
        
         //public int ?IdRol { get; set; } //Para que al mostrar en AGREGAR, no venga el texbox con un 0
                                         //(por el if de BL>GetAll=>  IdRol == null )
