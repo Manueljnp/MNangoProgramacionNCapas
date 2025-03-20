@@ -27,6 +27,7 @@
             <div class="col">
                 @Html.LabelFor(model => model.UserName, new { @class = "form-label text-dark fw-bold" })
                 @Html.TextBoxFor(model => model.UserName, new { @class = "form-control rounded-pill", @onblur = "validarVacio(event)", @id = "inptUserName" })
+
                 @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
             </div>
             <div class="col">
@@ -34,10 +35,11 @@
                 @Html.TextBoxFor(model => model.Nombre, new
                 {
                     @class = "form-control rounded-pill",
-               /*@onkeypress = "SoloLetras(event)", @onblur="BorrarMensaje(event)",*/
+                    /*@onkeypress = "SoloLetras(event)", @onblur="BorrarMensaje(event)",*/
                     @id = "idNombre"
                 }) <!--ONKEYPRESS=> detecta la tecla presionada (evento)-->
                 <span class="error"></span>
+
                 @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
             </div>
             <div class="col">
@@ -260,9 +262,12 @@
 
     <div>
         <p></p>
-        <button type="submit" class="btn btn-primary mb-2" name="btnAgregarRegistro" id="btnAgregarRgistro" onchange="validarRegistro();">Agregar Registro</button>
+        <button type="submit" class="btn btn-primary mb-2" name="btnAgregarRegistro" id="btnAgregarRegistro" onchange="validarRegistro();">Agregar Registro</button>
     </div>
 }
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
 
 <!--VARiables para RUTAS Razor-->
 <script>
@@ -284,7 +289,3 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
 <script src="~/Scripts/Usuario/ValidacionesForm.js"></script>
-
-<script>
-    console.log('@Model.Sexo');
-</script>

@@ -123,6 +123,39 @@ namespace PL_Web.Controllers
             if (ModelState.IsValid)
             {
                 // Validation success.
+                string mensaje = "";
+                //Obtener el archivo de la Imagen:      Nombre del input (o el id?)
+                HttpPostedFileBase file = Request.Files["inptFileImagen"];
+                if (file != null /*&& file.ContentLength > 0*/)
+                {
+                    usuario.Imagen = ConvertirAArrayBytes(file);
+                }
+
+                /*else
+                {
+                    //Si no selecciona una nueva imagen, mantener la imagen acctual
+                    if (!string.IsNullOrEmpty(Request.Form["ImagenActual"]))
+                    {
+                        usuario.Imagen = Convert.FromBase64String(Request.Form["ImagenActual"]);
+                    }
+                }*/
+
+                if (usuario.IdUsuario == 0)
+                {
+                    //ADD CON DIRECCION (Cambiar a 'ADD' al finalizar pruebas) **************************************************************
+                    BL.Usuario.Add(usuario);
+                    mensaje = "Usuario agregado correctamente";
+                }
+                else
+                {
+                    //UPDATE
+                    BL.Usuario.Update(usuario);
+                    mensaje = "Usuario actualizado correctamente";
+
+                }
+
+                ViewBag.Mensaje = mensaje;
+                return PartialView("_Partial");
             }
             else
             {
@@ -168,39 +201,7 @@ namespace PL_Web.Controllers
                 return View(usuario);
             }
 
-            string mensaje = "";
-            //Obtener el archivo de la Imagen:      Nombre del input (o el id?)
-            HttpPostedFileBase file = Request.Files["inptFileImagen"];
-            if (file != null /*&& file.ContentLength > 0*/)
-            {
-                usuario.Imagen = ConvertirAArrayBytes(file);
-            }
-
-            /*else
-            {
-                //Si no selecciona una nueva imagen, mantener la imagen acctual
-                if (!string.IsNullOrEmpty(Request.Form["ImagenActual"]))
-                {
-                    usuario.Imagen = Convert.FromBase64String(Request.Form["ImagenActual"]);
-                }
-            }*/
-
-            if (usuario.IdUsuario == 0)
-            {
-                //ADD CON DIRECCION (Cambiar a 'ADD' al finalizar pruebas) **************************************************************
-                BL.Usuario.Add(usuario);
-                mensaje = "Usuario agregado correctamente";
-            }
-            else
-            {
-                //UPDATE
-                BL.Usuario.Update(usuario);
-                mensaje = "Usuario actualizado correctamente";
-
-            }
-
-            ViewBag.Mensaje = mensaje;
-            return PartialView("_Partial");
+            
 
         }
 
