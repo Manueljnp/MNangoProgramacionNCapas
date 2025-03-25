@@ -738,6 +738,12 @@ namespace BL
                             usuario.CURP = objBD.CURP;
                             usuario.Imagen = objBD.Imagen;
 
+                            //Traer imagen en base64
+                            if(objBD.Imagen != null)
+                            {
+                                usuario.ImagenBase64 = Convert.ToBase64String(objBD.Imagen);
+                            }
+
                             //Asigarle el valor a traveés de usuario entrar a Rol y luego al atributo
                             usuario.Rol.Nombre = objBD.NombreRol;//Y el objBD es como aparece en la BD, en SQL le puse NombreRol al ALIAS en mi SP
 

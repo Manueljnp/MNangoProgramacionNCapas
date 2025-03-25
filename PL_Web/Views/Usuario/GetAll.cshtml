@@ -6,10 +6,7 @@
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-<h2>GetAll</h2>
-
-<a href="@Url.Action("Form", "Usuario")" class="btn btn-primary mb-3">Agregar Registro</a>
+<!--Intento de CRUD solo JS-->
 
 <!--Ocultar la busqueda usando COLLAPSE-->
 <p>                                                                                     <!--Nombre del Id del DIV-->
@@ -17,36 +14,7 @@
     <button type="button" data-bs-toggle="collapse" class="btn btn-secondary mt-3" data-bs-target="#extraView">Carga Masiva</button>
 </p>
 
-<!-- Escribir un ID para llamarlo desde el botón de arriba-->
-<div id="DivBusquedaAbierta" class="collapse multi-section">
-    <div class="card p-3 bg-light shadow-sm">
-        <!--         Nombre del Método y Controlador - tipo de acción      dejar por si vamos a cargar archivos-->
-        @using (Html.BeginForm("GetAll", "Usuario", FormMethod.Post, new { @enctype = "multipart/form-data" }))
-        {
 
-            <div class="row">
-                <div class="col">
-                    @Html.LabelFor(model => model.Nombre, new { @class = "form-label text-dark fw-bold", @id = "lblNombre" })
-                    @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control rounded-pill" })
-                </div>
-                <div class="col">
-                    @Html.LabelFor(model => model.ApellidoPaterno, new { @class = "form-label text-dark fw-bold", @id = "lblApellidoPaterno" })
-                    @Html.TextBoxFor(model => model.ApellidoPaterno, new { @class = "form-control rounded-pill" })
-                </div>
-                <div class="col">
-                    @Html.LabelFor(model => model.ApellidoMaterno, new { @class = "form-label text-dark fw-bold", @id = "lblApellidoMaterno" })
-                    @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control rounded-pill" })
-                </div>
-                <div class="col">
-                    @Html.LabelFor(model => model.Rol.IdRol, new { @class = "form-label text-dark fw-bold", @id = "lblRol" })
-                    @Html.DropDownListFor(model => model.Rol.IdRol, new SelectList(Model.Rol.Roles, "IdRol", "Nombre"),
-                   "Selecciona un Rol", new { @class = "form-control", @id = "ddlRol" })
-                </div>
-            </div>
-            <button type="submit" class="btn btn-dark mt-3"> Buscar </button>
-        }
-    </div>
-</div>
 
 <!-- Carga Masiva -->
 <div id="extraView" class="collapse multi-section">
@@ -69,180 +37,254 @@
 
 <p></p>
 
-@if (Model.Usuarios.Count > 0)
-{
-    <div class="table-responsive">
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Prueba</h1>
+            <h5>CRUD JS</h5>
+        </div>
+        <div class="col-12">
 
-        <!-- <button type="button" class="btn btn-primary mb-3">Agregar</button> -->
-        <table class="table table-dark table-striped">
-            <thead>
-                <tr>
-                    <th scoope="col">Estatus</th>
-                    <th scoope="col">Editar</th>
-                    <th scope="col">UserName</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Apellido Paterno</th>
-                    <th scope="col">Apellido Materno</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Password</th>
-                    <th scope="col">Fecha de Nacimiento</th>
-                    <th scope="col">Sexo</th>
-                    <th scope="col">Telefono</th>
-                    <th scope="col">Celular</th>
-                    <th scope="col">CURP</th>
-                    <th scope="col">Nombre Rol</th>
-                    <th scoope="col">Dirección</th>
-                    <th scoope="col">Imagen</th>
-                    <th scoope="col">Eliminar</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (ML.Usuario usuario in Model.Usuarios)
-                {
-                    <tr>
-                        <td>
-                            @if (usuario.Estatus)
-                            {<!--El INPUT nos ayuda a saber la función, nos devuelbe un TRUE o un FALSE-->
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked
-                                           onchange="CambioEstatus(@usuario.IdUsuario, this)">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Agregar
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Agregar Usuario</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="modal-header">
+                                    <label class="gap-lg-2">Nombre</label>
+                                    <input id="txtNombre" class="form-control rounded-pill" />
                                 </div>
-                            }
-                            else
-                            {
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
-                                           onchange="CambioEstatus(@usuario.IdUsuario, this)">
+                                <div class="modal-header">
+                                    <label class="gap-lg-2">Apellido Paterno</label>
+                                    <input id="txtApellidoPaterno" class="form-control rounded-pill" />
+                                    <label class="gap-lg-2 m-1">Apellido Materno</label>
+                                    <input id="txtApellidoMaterno" class="form-control rounded-pill" />
                                 </div>
-                            }
+                                <div class="modal-header">
 
-                        </td>
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Email</label>
+                                    <input id="txtEmail" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Password</label>
+                                    <input id="txtPassword" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Fecha de Nacimiento</label>
+                                    <input id="txtFechaNacimiento" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Sexo</label>
+                                    <input type="radio" name="sexo" value="M" id="txtSexo"> <label for="txtSexo">Masculino</label>
+                                    <input type="radio" name="sexo" value="F" id="txtSexoF" /> <label for="txtSexoF">Femenino</label>
 
-                        <!--Quitar este botón:
-                            <button class="bg-warning">
-                            <i class="bi bi-pencil"></i>
-                            </button>
-                        -->
-                        <td>
-                            <a href="@Url.Action("Form", "Usuario", new {IdUsuario = usuario.IdUsuario})"
-                               class="btn btn-warning">
-                                <i class="bi bi-pencil"></i>
-                            </a>
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Telefono</label>
+                                    <input id="txtTelefono" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Celular</label>
+                                    <input id="txtCelular" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Curp</label>
+                                    <input id="txtCRUP" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">ROLLLLLOLLLLLLLLLLLLLLOL</label>
+                                    <input id="txtRol" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Calle</label>
+                                    <input id="txtCalle" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Numero exterior</label>
+                                    <input id="txtNumeroExterior" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Numero interior</label>
+                                    <input id="txtNumeroInterior" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Colonia</label>
+                                    <input id="txtColonia" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Municipio</label>
+                                    <input id="txtMunicipio" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Estado</label>
+                                    <input id="txtEstado" class="form-control rounded-pill" />
+                                </div>
+                                <div class="border-light">
+                                    <label class="gap-lg-3">Imagen</label>
+                                    <input id="txtImagen" class="form-control rounded-pill" />
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" onclick="GetAll()">Aceptar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                        </td>
-                        <td>@usuario.UserName</td>
-                        <td>@usuario.Nombre</td>
-                        <td>@usuario.ApellidoPaterno</td>
-                        <td>@usuario.ApellidoMaterno</td>
-                        <td>@usuario.Email</td>
-                        <td>@usuario.Password</td>
-                        <td>@usuario.FechaNacimiento</td>
-                        <td>@usuario.Sexo</td>
-                        <td>@usuario.Telefono</td>
-                        <td>@usuario.Celular</td>
-                        <td>@usuario.CURP</td>
-                        <td>@usuario.Rol.Nombre</td>
-                        <td>
-                            @usuario.Direccion.Calle, @usuario.Direccion.NumeroInterior, @usuario.Direccion.NumeroExterior, <br>
-                            @usuario.Direccion.Colonia.Nombre, @usuario.Direccion.Colonia.CodigoPostal, @usuario.Direccion.Colonia.Municipio.Nombre, <br>
-                            @usuario.Direccion.Colonia.Municipio.Estado.Nombre <br>
-
-                        </td>
-                        <td>
-                            @if (usuario.Imagen != null)
-                            {
-                                <img src="@($"data:image/jpeg;base64,{Convert.ToBase64String(usuario.Imagen)}")" width="80" height="80" />
-                            }
-                            else
-                            {
-                                <img id="imgUsuario" src="https://thumb.ac-illust.com/51/51e1c1fc6f50743937e62fca9b942694_t.jpeg" width="80" height="80" />
-
-                            }
-                        </td>
-                        <td>
-                            <!-- Ya No usaremos el botón y dentro el Icono-->
-                            <!--<button class="bg-danger">
-                                <i class="bi bi-trash3"></i>
-                            </button>-->
-                            <!-- Cambiar a ANCHOR (a) y en el CLASS poner BTN, Además se hace una condición con JScript-->
-                            <a href="@Url.Action("Delete", "Usuario", new {IdUsuario = usuario.IdUsuario})"
-                               class="btn btn-danger " onclick="return confirm('Seguro que lo quieres borrar?')">
-
-                                <i class="bi bi-trash3"></i>
-
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+            <div class="table-responsive mt-4">
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Editar</th>
+                            <th>UserName</th>
+                            <th>Nombre</th>
+                            <th>Apellido Paterno</th>
+                            <th>Apellido Materno</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th>Fecha de Nacimiento</th>
+                            <th>Sexo</th>
+                            <th>Telefono</th>
+                            <th>Celular</th>
+                            <th>CURP</th>
+                            <th>Nombre Rol</th>
+                            <th>Dirección</th>
+                            <th>Imagen</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-}
-else
-{
-    <div class="alert alert-danger" role="alert">
-        No hay registros en la Base de Datos.
-    </div>
-}
+</div>
 
-
+<!--Intentando hacer las funciones-->
 <script src="~/Scripts/jquery-3.7.0.js"></script>
 
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <script>
-    //let div = $("div")
-    //console.log(div)
-    function CambioEstatus(IdUsuario, input) {
-        let estatus = input.checked
-        $.ajax({                //Metodo     Controlador
-            url: "@Url.Action("CambioEstatus", "Usuario")",  //Ruta del método a consumir (Ruta Relativa)
-            dataType: "json", //Tipo de información a enviar (JSON/xml, etc)
-            type: "POST",   //Tipo de petición (GET, POST, PUT, DELETE)
-            data: { IdUsuario: IdUsuario, Estatus: estatus },  //Que voy a enviar
-            //JSON se compone de Claves/Llaves y Sus valores (exactamente iguales a las del controlador)
+    GetAll();
+
+    function GetAll() {
+        $.ajax({
+            //url: '@@Url.Action("GetAllusuario", "Usuario")', RUTA RAZOR
+            url: '/CRUDjs/GetAllusuario',
+            type: 'GET',
+            dataType: 'JSON',
             success: function (result) {
                 if (result.Correct) {
-                    //algo
-                }
-                else {
-                    alert("Hubo un Error")
-                }
-            },    //entra cuando ajax se conectó bien con el método (Success siempre ejecuta una función)
-            error: function (xhr) {
-                console.log(xhr)
-            }   //se ejecuta cuando ajax NO se conectó bien con el método
-        })
-    }
 
-    function validarExtensionExcel() {
-        var input = $('#inptExcel')[0].files[0].name.split('.').pop().toLowerCase();
-        var extensionValida = ['xlsx'];
-        var bandera = false;
+                    var usuarios = result.Objects;
+                    var tabla = document.getElementById("tbody");
+                    var row = ``;
 
-        for (var i = 0; i <= extensionValida.length; i++) {
-            if (input === extensionValida[i]) {
-                bandera = true;
+                    $.each(usuarios, function (index, usuario) {
+                        var imagen = usuario.ImagenBase64
+                            ? `<img src="data:image/png;base64,${usuario.ImagenBase64} alt=Imagen del usuario"
+                                style="width: 50px; height: 50px;">`
+                            : "No hay imagen";
+
+                        row += `
+                        <tr>
+                            <td><a class="btn btn-warning" onclick="GetById(${usuario.IdUsuario})"> <i class="bi bi-pencil-square"></i></a></td>
+                            <td>${usuario.UserName}</td>
+                            <td>${usuario.Nombre}</td>
+                            <td>${usuario.ApellidoPaterno}</td>
+                            <td>${usuario.ApellidoMaterno}</td>
+                            <td>${usuario.Email}</td>
+                            <td>${usuario.Password}</td>
+                            <td>${usuario.FechaNacimiento}</td>
+                            <td>${usuario.Sexo}</td>
+                            <td>${usuario.Telefono}</td>
+                            <td>${usuario.Celular}</td>
+                            <td>${usuario.CURP}</td>
+                            <td>${usuario.Rol.Nombre}</td>
+                            <td> ${usuario.Direccion.Calle}, ${usuario.Direccion.NumeroInterior}, ${usuario.Direccion.NumeroExterior},
+                            ${usuario.Direccion.Colonia.Nombre}, ${usuario.Direccion.Colonia.CodigoPostal}, ${usuario.Direccion.Colonia.Municipio.Nombre},
+                            ${usuario.Direccion.Colonia.Municipio.Estado.Nombre} </td>
+                            <td>${usuario.imagen}</td>
+                            <td><a class="btn btn-danger" onclick="Delete(${usuario.IdUsuario})"><i class="bi bi-trash"></i></a></td>
+                        </tr>
+                    `;
+                    });
+
+                    $('#tbody').empty().append(row);
+                } else {
+                    alert('Error');
+                }
             }
-        }
+        });
+    }
 
-        if (!bandera) {
-            alert('Solo se permiten archivos Excel (.xlsx)');
-            $('#inptExcel').val('');
+    function Delete(id) {
+        console.log(id);
+        if (confirm('¿Estás seguro de eliminar jsjs?')) {
+            $.ajax({
+                url: '/Usuario/Delete',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ idUsuario: id }),
+                success: function (response) {
+                    if (response.Success) {
+                        alert('El usuario fue eliminado correctamente');
+                        GetAll();
+                    } else {
+                        alert('Error al eliminar' + response.Message);
+                    }
+                }
+            });
         }
     }
 
-    function validarArchivo() {
-        var input = document.getElementById('inptExcel');
-        var errorMessage = input.parentNode.querySelector("Error");
-        if (input.files.length > 0) {
-            alert('Archivo cargado correctamente, se validará');
-        }
-        else {
-            console.log('No metiste nada');
-            alert('No haz seleccionado ningún archivo');
-            event.preventDefault();
-            return;
-        }
+    function OpenForm() {
+        $("#staticBackdrop").modal("show");
+        ClearForm();
+
+    }
+
+    function ClearForm() {
+
+    }
+
+    function Guardar() {
+
+    }
+
+    function UpdateUsuario() {
+
+    }
+
+    function GuardarOActualizar() {
+
+    }
+
+    function GetById(idUsuario) {
+        $.ajax({
+            url: '@Url.Action("Form", "Usuario")',
+            type: 'GET',
+            data: { idUsuario: idUsuario },
+            dataType: 'JSON',
+            success: function (result) {
+                if (result.Correct) {
+                    var usuario
+                }
+            }
+        });
     }
 </script>

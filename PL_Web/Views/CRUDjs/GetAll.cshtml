@@ -1,0 +1,228 @@
+﻿@model ML.Usuario
+@{
+    ViewBag.Title = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<!--Intento de CRUD solo JS-->
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Prueba</h1>
+            <h5>CRUD JS</h5>
+        </div>
+        <div class="col-12">
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-target="#staticBackdrop" onclick="FormularioNuevo()">
+                Agregar
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Agregar Usuario</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <form id="userForm" onsubmit="validarFormulario(event)" enctype="multipart/form-data">
+                                <!-- ID oculto -->
+                                <input type="hidden" id="idUsuario" name="idUsuario">
+                                <input type="hidden" id="imagen" name="imagen">
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="inptUserName" class="form-label text-dark fw-bold">Usuario</label>
+                                        <input type="text" id="inptUserName" name="userName" class="form-control rounded-pill" onblur="validarVacio(event)">
+                                        <span class="text-danger error" id="errorUserName"></span>
+                                    </div>
+                                    <div class="col">
+                                        <label for="inptNombre" class="form-label text-dark fw-bold">Nombre</label>
+                                        <input type="text" id="inptNombre" name="nombre" class="form-control rounded-pill" onblur="validarVacio(event)" onkeypress="SoloLetras(event)">
+                                        <span class="text-danger error"></span>
+                                    </div>
+                                    <div class="col">
+                                        <label for="inptApellidoPaterno" class="form-label text-dark fw-bold">Apellido Paterno</label>
+                                        <input type="text" id="inptApellidoPaterno" name="ApellidoPaterno" class="form-control rounded-pill" onblur="validarVacio(event)" onkeypress="SoloLetras(event)">
+                                        <span class="text-danger error"></span>
+                                    </div>
+                                    <div class="col">
+                                        <label for="inptApellidoMaterno" class="form-label text-dark fw-bold">Apellido Materno</label>
+                                        <input type="text" id="inptApellidoMaterno" name="ApellidoMaterno" class="form-control rounded-pill" onkeypress="SoloLetras(event)">
+                                        <span class="text-danger error"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <label for="inptEmail" class="form-label text-dark fw-bold">Email</label>
+                                        <input type="email" id="inptEmail" name="email" class="form-control rounded-pill" onblur="validarCorreo(event)">
+                                        <span class="text-danger error"></span>
+                                    </div>
+                                    <div class="col">
+                                        <label for="inptPassword" class="form-label text-dark fw-bold">Contraseña</label>
+                                        <input type="password" id="inptPassword" name="password" class="form-control rounded-pill">
+                                        <span class="text-danger error"></span>
+                                    </div>
+                                    <div class="col">
+                                        <label for="inptConfirmarPassword" class="form-label text-dark fw-bold">Confirmar Contraseña</label>
+                                        <input type="password" id="inptConfirmarPassword" class="form-control rounded-pill" onblur="validarVacio(event); validarPassword(event);">
+                                        <span class="text-danger error"></span>
+                                    </div>
+                                    <div class="col">
+                                        <label for="datepicker" class="form-label text-dark fw-bold">Fecha de Nacimiento</label>
+                                        <input type="date" id="datepicker" name="fechaNacimiento" class="form-control rounded-pill">
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <label class="form-label text-dark fw-bold">Sexo</label>
+                                        <div class="form-check">
+                                            <input type="radio" id="sexoF" name="sexo" value="F" class="form-check-input">
+                                            <label for="sexoF" class="form-check-label">Femenino</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="radio" id="sexoM" name="sexo" value="M" class="form-check-input">
+                                            <label for="sexoM" class="form-check-label">Masculino</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="radio" id="sexoO" name="sexo" value="O" class="form-check-input">
+                                            <label for="sexoO" class="form-check-label">Otro</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <input type="file" accept=".png" name="inptFileImagen" id="inptFileImagen" class="form-control" onchange="validarExtension(); visualizarImagen(this);" />
+                                        <img id="imgUsuario" src="https://thumb.ac-illust.com/51/51e1c1fc6f50743937e62fca9b942694_t.jpeg" width="50" height="50" />
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <label for="inptTelefono" class="form-label text-dark fw-bold">Teléfono</label>
+                                        <input type="tel" id="inptTelefono" name="telefono" class="form-control rounded-pill" onkeypress="validarNumerosCaracter(event)">
+                                    </div>
+                                    <div class="col">
+                                        <label for="inptCelular" class="form-label text-dark fw-bold">Celular</label>
+                                        <input type="tel" id="inptCelular" name="celular" class="form-control rounded-pill" onkeypress="validarNumerosCaracter(event)">
+                                    </div>
+                                    <div class="col">
+                                        <label for="inptCURP" class="form-label text-dark fw-bold">CURP</label>
+                                        <input type="text" id="inptCURP" name="curp" class="form-control rounded-pill" onkeyup="validarCURP(event)">
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <label for="ddlRol" class="form-label text-dark fw-bold">Rol</label>
+                                        <select id="ddlRol" name="ddlRol" class="form-control">
+                                            <option value="">Selecciona un Rol</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--DIRECCIÓN-->
+                                <div class="row mt-3">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="inptCalle" class="form-label text-dark fw-bold">Calle</label>
+                                            <input id="inptCalle" name="calle" class="form-control rounded-pill" onblur="validarVacio(event)">
+                                            <span class="text-danger error"></span>
+                                        </div>
+                                        <div class="col">
+                                            <label for="inptNumeroInterior" class="form-label text-dark fw-bold">Numero Interior</label>
+                                            <input id="inptNumeroInterior" name="numerointerior" class="form-control rounded-pill" onblur="validarNumerosCaracter(event)">
+                                            <span class="text-danger error"></span>
+                                        </div>
+                                        <div class="col">
+                                            <label for="inptNumeroExterior" class="form-label text-dark fw-bold">Numero Exterior</label>
+                                            <input id="inptNumeroExterior" name="numeroexterior" class="form-control rounded-pill" onblur="validarNumerosCaracter(event)">
+                                            <span class="text-danger error"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="ddlEstado" class="form-label text-dark fw-bold">Estado</label>
+                                        <select id="ddlEstado" class="form-control" onchange="MunicipioGetByIdEstadoSimple()">
+                                            <option value="">Selecciona un Estado</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="ddlMunicipio" class="form-label text-dark fw-bold">Municipio</label>
+                                        <select id="ddlMunicipio" class="form-control" onchange="ColoniaGetByIdMunicipioSimple()" disabled>
+                                            <option value="">Selecciona un Municipio</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="ddlColonia" class="form-label text-dark fw-bold">Colonia</label>
+                                        <select id="ddlColonia" class="form-control" disabled>
+                                            <option value="">Selecciona una Colonia</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="modal-footer mt-4">
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="table-responsive mt-4">
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Editar</th>
+                            <th>UserName</th>
+                            <th>Nombre</th>
+                            <th>Apellido Paterno</th>
+                            <th>Apellido Materno</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th>Fecha de Nacimiento</th>
+                            <th>Sexo</th>
+                            <th>Telefono</th>
+                            <th>Celular</th>
+                            <th>CURP</th>
+                            <th>Nombre Rol</th>
+                            <th>Dirección</th>
+                            <th>Imagen</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Intentando hacer las funciones-->
+<script src="~/Scripts/jquery-3.7.0.js"></script>
+<script>
+    var pathGetAll = "@Url.Action("GetAllusuario")"
+    var pathAddUpdate = "@Url.Action("Form")"
+    var pathGetById = "@Url.Action("GetById")"
+
+    var pathDelete = "@Url.Action("Delete")"
+    var pathAdd = "@Url.Action("Add")"
+    var pathUpdate = "@Url.Action("Update")"
+
+    var pathRol = "@Url.Action("GetRoles")"
+    var pathEstadoGetAll = "@Url.Action("GetAllEstados")"
+
+    var pathGetAllMunicipios = "@Url.Action("GetMunicipiosByEstado")"
+    var pathGetAllColonias = "@Url.Action("GetColoniasByMunicipio")"
+</script>
+
+<script src="~/Scripts/Usuario/CRUDjs.js"></script>

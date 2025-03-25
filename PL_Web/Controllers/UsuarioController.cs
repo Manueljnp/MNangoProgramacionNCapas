@@ -12,9 +12,15 @@ namespace PL_Web.Controllers
 {
     public class UsuarioController : Controller
     {
+
+        /*public ActionResult GetAll()
+        {
+            return View();
+        }*/
+
         // GET: Mostrar GetAll (TODOS)
         [HttpGet]
-        public ActionResult GetAll()
+        public JsonResult GetAllusuario()
         {
             ML.Usuario usuario = new ML.Usuario();
             usuario.Rol = new ML.Rol();
@@ -41,7 +47,7 @@ namespace PL_Web.Controllers
                 usuario.Usuarios = new List<object>();
             }
 
-            return View(usuario);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         //POST: Para realizar la busqueda abierta en GetAll
@@ -134,7 +140,7 @@ namespace PL_Web.Controllers
                 usuario.Direccion.Colonia.Municipio.Estado = new ML.Estado(); //Inicializar la propiedad Estado
 
                 //Condición para mostrar ROL
-                if (usuario.IdUsuario == null)
+                if (usuario == null)
                 {
                     usuario.Rol = new ML.Rol();
                 }
@@ -203,6 +209,26 @@ namespace PL_Web.Controllers
             return PartialView("_Partial");
 
         }
+
+        [HttpGet]
+        public JsonResult GetRoles()
+        {
+            ML.Result resultRoles = BL.Rol.GetAll();
+
+            if (resultRoles.Correct)
+            {
+                var roles = resultRoles.Objects.Select(r => new
+                {
+                    IdRol = ((ML.Rol)r).IdRol,
+                    Nombre = ((ML.Rol)r).Nombre
+                }).ToList();
+
+                return Json(roles, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(new { success = false, message = "No se pudieron obtener los roles" }, JsonRequestBehavior.AllowGet);
+        }
+
 
         [HttpGet]
         public ActionResult Delete(int IdUsuario)
