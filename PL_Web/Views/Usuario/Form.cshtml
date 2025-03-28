@@ -205,41 +205,41 @@
         <div class="row">
             <div class="col">
                 @Html.LabelFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, new { @class = "form-label text-dark fw-bold" })
-                @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, new SelectList(Model.Direccion.Colonia.Municipio.Estado.Estados, "IdEstado", "Nombre"),
-                    "Selecciona el Estado", new { @onchange = "MunicipioGetByIdEstado()", @id = "ddlEstado", @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, "", new { @class = "text-danger" })
-            </div>
-            <div class="col">
-                @Html.LabelFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new { @class = "form-label text-dark fw-bold" })
+                        @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, new SelectList(Model.Direccion.Colonia.Municipio.Estado.Estados, "IdEstado", "Nombre"),
+                                 "Selecciona el Estado", new { @onchange = "MunicipioGetByIdEstado()", @id = "ddlEstado", @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col">
+                        @Html.LabelFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new { @class = "form-label text-dark fw-bold" })
 
-                @if (Model.Direccion.Colonia.Municipio.Municipios != null)
-                {
-                    @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new SelectList(Model.Direccion.Colonia.Municipio.Municipios, "IdMunicipio", "Nombre"),
-                        "Selecciona un Municipio",
-                         new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control" })
-                }
-                else
-                {
-                    @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new SelectList(String.Empty), "Selecciona un Municipio",
-                        new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, "", new { @class = "text-danger" })
-                }
+                        @if (Model.Direccion.Colonia.Municipio.Municipios != null)
+                        {
+                            @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new SelectList(Model.Direccion.Colonia.Municipio.Municipios, "IdMunicipio", "Nombre"),
+                                     "Selecciona un Municipio",
+                                      new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control" })
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new SelectList(String.Empty), "Selecciona un Municipio",
+                                     new { @onchange = "ColoniaGetByIdMunicipio()", @id = "ddlMunicipio", @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, "", new { @class = "text-danger" })
+                        }
             </div>
             <div class="col">
                 @Html.LabelFor(model => model.Direccion.Colonia.IdColonia, new { @class = "form-label text-dark fw-bold" })
 
                 @if (Model.Direccion.Colonia.Colonias != null)
-                {
-                    @Html.DropDownListFor(model => model.Direccion.Colonia.IdColonia, new SelectList(Model.Direccion.Colonia.Colonias, "IdColonia", "Nombre"),
-                        "Selecciona una Colonia",
-                        new { @id = "ddlColonia", @class = "form-control" })
-                }
-                else
-                {
-                    @Html.DropDownListFor(model => model.Direccion.Colonia.IdColonia, new SelectList(String.Empty), "Selecciona una Colonia",
-                         new { @id = "ddlColonia", @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Direccion.Colonia.IdColonia, "", new { @class = "text-danger" })
-                }
+                    {
+                        @Html.DropDownListFor(model => model.Direccion.Colonia.IdColonia, new SelectList(Model.Direccion.Colonia.Colonias, "IdColonia", "Nombre"),
+                                 "Selecciona una Colonia",
+                                 new { @id = "ddlColonia", @class = "form-control" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.Direccion.Colonia.IdColonia, new SelectList(String.Empty), "Selecciona una Colonia",
+                                  new { @id = "ddlColonia", @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Direccion.Colonia.IdColonia, "", new { @class = "text-danger" })
+                    }
             </div>
         </div>
     </div>
@@ -250,14 +250,14 @@
         <input type="file" accept=".png" name="inptFileImagen" id="inptFileImagen" class="form-control" onchange="validarExtension(); visualizarImagen(this);" />
         <!--Poner un Campo Oculto para mantener imagen actual si no se selecciona una nueva
         <input type="hidden" name="ImagenActual" id="ImagenActual" value="Convert.ToBase64String(Model.Imagen)" /> -->
-        @if (Model.Imagen == null)
+        @*@if (Model.Imagen == null)
         {
             <img id="imgUsuario" src="https://thumb.ac-illust.com/51/51e1c1fc6f50743937e62fca9b942694_t.jpeg" width="150" height="150" />
         }
         else
         {
             <img src="@($"data:image/jpeg;base64,{Convert.ToBase64String(Model.Imagen)}")" width="150" height="150" />
-        }
+        }*@
     </div>
 
     <div>

@@ -736,7 +736,7 @@ namespace BL
                             usuario.Celular = objBD.Celular;
                             usuario.Estatus = objBD.Estatus;
                             usuario.CURP = objBD.CURP;
-                            usuario.Imagen = objBD.Imagen;
+                            //usuario.Imagen = objBD.Imagen;
 
                             //Asigarle el valor a traveés de usuario entrar a Rol y luego al atributo
                             usuario.Rol.Nombre = objBD.NombreRol;//Y el objBD es como aparece en la BD, en SQL le puse NombreRol al ALIAS en mi SP

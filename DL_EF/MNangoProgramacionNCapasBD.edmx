@@ -329,9 +329,6 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
           <FunctionImport Name="MunicipioGetByIdEstado" ReturnType="Collection(MNangoProgramacionNCapasBDModel.MunicipioGetByIdEstado_Result)">
           <Parameter Name="IdEstado" Mode="In" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="UsuarioDelete">
-          <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
-          </FunctionImport>
           <FunctionImport Name="UsuarioAdd" ReturnType="Collection(Int32)">
             <Parameter Name="UserName" Mode="In" Type="String" />
             <Parameter Name="Nombre" Mode="In" Type="String" />
@@ -374,7 +371,6 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
             <Parameter Name="IdColonia" Mode="In" Type="Int32" />
             <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
           </FunctionImport>
-          <EntitySet Name="UsuarioGetAllViews" EntityType="MNangoProgramacionNCapasBDModel.UsuarioGetAllView" />
           <FunctionImport Name="UsuarioGetAll" ReturnType="Collection(MNangoProgramacionNCapasBDModel.UsuarioGetAll_Result)">
             <Parameter Name="Nombre" Mode="In" Type="String" />
             <Parameter Name="ApellidoPaterno" Mode="In" Type="String" />
@@ -386,6 +382,10 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
             <Parameter Name="ApellidoPaterno" Mode="In" Type="String" />
             <Parameter Name="ApellidoMaterno" Mode="In" Type="String" />
             <Parameter Name="IdRol" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="UsuarioGetAllViews" EntityType="MNangoProgramacionNCapasBDModel.UsuarioGetAllView" />
+          <FunctionImport Name="UsuarioDelete">
+            <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Usuario">
@@ -561,41 +561,6 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
           <Property Type="String" Name="NombreColonia" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="CodigoPostal" Nullable="true" MaxLength="10" />
         </ComplexType>
-        <EntityType Name="UsuarioGetAllView">
-          <Key>
-            <PropertyRef Name="IdUsuario" />
-            <PropertyRef Name="Nombre" />
-            <PropertyRef Name="ApellidoPaterno" />
-            <PropertyRef Name="UserName" />
-            <PropertyRef Name="Email" />
-            <PropertyRef Name="Password" />
-            <PropertyRef Name="Sexo" />
-            <PropertyRef Name="Estatus" />
-          </Key>
-          <Property Name="IdUsuario" Type="Int32" Nullable="false" />
-          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ApellidoPaterno" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ApellidoMaterno" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="UserName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Email" Type="String" Nullable="false" MaxLength="254" FixedLength="false" Unicode="false" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="FechaNacimiento" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
-          <Property Name="Sexo" Type="String" Nullable="false" MaxLength="2" FixedLength="true" Unicode="false" />
-          <Property Name="Celular" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Estatus" Type="Boolean" Nullable="false" />
-          <Property Name="CURP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IdRol" Type="Int32" />
-          <Property Name="NombreRol" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Imagen" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="Calle" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="NumeroInterior" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="NumeroExterior" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="NombreColonia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="CodigoPostal" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="NombreMunicipio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="NombreEstado" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
         <ComplexType Name="UsuarioGetAll_Result">
           <Property Type="Int32" Name="IdUsuario" Nullable="false" />
           <Property Type="String" Name="Nombre" Nullable="false" MaxLength="50" />
@@ -644,6 +609,41 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
           <Property Type="String" Name="NombreMunicipio" Nullable="true" MaxLength="50" />
           <Property Type="String" Name="NombreEstado" Nullable="true" MaxLength="50" />
         </ComplexType>
+        <EntityType Name="UsuarioGetAllView">
+          <Key>
+            <PropertyRef Name="IdUsuario" />
+            <PropertyRef Name="Nombre" />
+            <PropertyRef Name="ApellidoPaterno" />
+            <PropertyRef Name="UserName" />
+            <PropertyRef Name="Email" />
+            <PropertyRef Name="Password" />
+            <PropertyRef Name="Sexo" />
+            <PropertyRef Name="Estatus" />
+          </Key>
+          <Property Name="IdUsuario" Type="Int32" Nullable="false" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ApellidoPaterno" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ApellidoMaterno" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="254" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaNacimiento" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Sexo" Type="String" Nullable="false" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="Celular" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Estatus" Type="Boolean" Nullable="false" />
+          <Property Name="CURP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IdRol" Type="Int32" />
+          <Property Name="NombreRol" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Imagen" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Calle" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="NumeroInterior" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="NumeroExterior" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="NombreColonia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoPostal" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="NombreMunicipio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NombreEstado" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -743,7 +743,6 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="UsuarioDelete" FunctionName="MNangoProgramacionNCapasBDModel.Store.UsuarioDelete" />
           <FunctionImportMapping FunctionImportName="UsuarioAdd" FunctionName="MNangoProgramacionNCapasBDModel.Store.UsuarioAdd" />
           <FunctionImportMapping FunctionImportName="UsuarioGetById" FunctionName="MNangoProgramacionNCapasBDModel.Store.UsuarioGetById">
             <ResultMapping>
@@ -779,35 +778,6 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="UsuarioUpdate" FunctionName="MNangoProgramacionNCapasBDModel.Store.UsuarioUpdate" />
-          <EntitySetMapping Name="UsuarioGetAllViews">
-            <EntityTypeMapping TypeName="MNangoProgramacionNCapasBDModel.UsuarioGetAllView">
-              <MappingFragment StoreEntitySet="UsuarioGetAllView">
-                <ScalarProperty Name="NombreEstado" ColumnName="NombreEstado" />
-                <ScalarProperty Name="NombreMunicipio" ColumnName="NombreMunicipio" />
-                <ScalarProperty Name="CodigoPostal" ColumnName="CodigoPostal" />
-                <ScalarProperty Name="NombreColonia" ColumnName="NombreColonia" />
-                <ScalarProperty Name="NumeroExterior" ColumnName="NumeroExterior" />
-                <ScalarProperty Name="NumeroInterior" ColumnName="NumeroInterior" />
-                <ScalarProperty Name="Calle" ColumnName="Calle" />
-                <ScalarProperty Name="Imagen" ColumnName="Imagen" />
-                <ScalarProperty Name="NombreRol" ColumnName="NombreRol" />
-                <ScalarProperty Name="IdRol" ColumnName="IdRol" />
-                <ScalarProperty Name="CURP" ColumnName="CURP" />
-                <ScalarProperty Name="Estatus" ColumnName="Estatus" />
-                <ScalarProperty Name="Celular" ColumnName="Celular" />
-                <ScalarProperty Name="Sexo" ColumnName="Sexo" />
-                <ScalarProperty Name="FechaNacimiento" ColumnName="FechaNacimiento" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
-                <ScalarProperty Name="ApellidoMaterno" ColumnName="ApellidoMaterno" />
-                <ScalarProperty Name="ApellidoPaterno" ColumnName="ApellidoPaterno" />
-                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
-                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="UsuarioGetAll" FunctionName="MNangoProgramacionNCapasBDModel.Store.UsuarioGetAll">
             <ResultMapping>
               <ComplexTypeMapping TypeName="MNangoProgramacionNCapasBDModel.UsuarioGetAll_Result">
@@ -864,6 +834,36 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="UsuarioGetAllViews">
+            <EntityTypeMapping TypeName="MNangoProgramacionNCapasBDModel.UsuarioGetAllView">
+              <MappingFragment StoreEntitySet="UsuarioGetAllView">
+                <ScalarProperty Name="NombreEstado" ColumnName="NombreEstado" />
+                <ScalarProperty Name="NombreMunicipio" ColumnName="NombreMunicipio" />
+                <ScalarProperty Name="CodigoPostal" ColumnName="CodigoPostal" />
+                <ScalarProperty Name="NombreColonia" ColumnName="NombreColonia" />
+                <ScalarProperty Name="NumeroExterior" ColumnName="NumeroExterior" />
+                <ScalarProperty Name="NumeroInterior" ColumnName="NumeroInterior" />
+                <ScalarProperty Name="Calle" ColumnName="Calle" />
+                <ScalarProperty Name="Imagen" ColumnName="Imagen" />
+                <ScalarProperty Name="NombreRol" ColumnName="NombreRol" />
+                <ScalarProperty Name="IdRol" ColumnName="IdRol" />
+                <ScalarProperty Name="CURP" ColumnName="CURP" />
+                <ScalarProperty Name="Estatus" ColumnName="Estatus" />
+                <ScalarProperty Name="Celular" ColumnName="Celular" />
+                <ScalarProperty Name="Sexo" ColumnName="Sexo" />
+                <ScalarProperty Name="FechaNacimiento" ColumnName="FechaNacimiento" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="ApellidoMaterno" ColumnName="ApellidoMaterno" />
+                <ScalarProperty Name="ApellidoPaterno" ColumnName="ApellidoPaterno" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="UsuarioDelete" FunctionName="MNangoProgramacionNCapasBDModel.Store.UsuarioDelete" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
