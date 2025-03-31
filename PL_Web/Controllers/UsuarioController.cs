@@ -1,4 +1,6 @@
 ﻿using BL;
+using Microsoft.Ajax.Utilities;
+using Microsoft.Owin.Security.Provider;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -9,6 +11,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using System.Xml.Linq;
 
 namespace PL_Web.Controllers
@@ -160,8 +163,8 @@ namespace PL_Web.Controllers
             return View(usuario);
         }
 
-        [HttpPost]  //Este es para Agregar y Actualizar (Validaciones DATA ANNOTATION)
-        public ActionResult Form(ML.Usuario usuario)
+        //Este es para Agregar y Actualizar (Validaciones DATA ANNOTATION)
+        /*public ActionResult Form(ML.Usuario usuario)
         {
             if (ModelState.IsValid)
             {
@@ -208,13 +211,13 @@ namespace PL_Web.Controllers
                 //usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstados.Objects;
 
                 //suario.Rol = new ML.Rol();
-                return View(usuario);*/
+                return View(usuario);
             }
 
             string mensaje = "";
             //Obtener el archivo de la Imagen:      Nombre del input (o el id?)
             HttpPostedFileBase file = Request.Files["inptFileImagen"];
-            if (file != null /*&& file.ContentLength > 0*/)
+            if (file != null /*&& file.ContentLength > 0)
             {
                 usuario.Imagen = ConvertirAArrayBytes(file);
             }
@@ -226,7 +229,7 @@ namespace PL_Web.Controllers
                 {
                     usuario.Imagen = Convert.FromBase64String(Request.Form["ImagenActual"]);
                 }
-            }*/
+            }
 
             UsuarioReference.UsuarioClient objeto = new UsuarioReference.UsuarioClient();
 
@@ -256,15 +259,51 @@ namespace PL_Web.Controllers
             ViewBag.Mensaje = mensaje;
             return PartialView("_Partial");
 
+        }*/
+
+        [HttpPost]
+        public ActionResult Form(ML.Usuario usuario)
+        {
+            if (ModelState.IsValid)
+            {
+                string mensaje = "";
+
+                // Obtener imagen desde el formulario
+                HttpPostedFileBase file = Request.Files["inptFileImagen"];
+                if (file != null && file.ContentLength > 0)
+                {
+                    usuario.Imagen = ConvertirAArrayBytes(file);
+                }
+
+                ML.Result result = InsertUpdate(usuario);
+
+                if (result.Correct)
+                {
+                    mensaje = usuario.IdUsuario == 0 ? "Usuario agregado correctamente" : "Usuario actualizado correctamente";
+                }
+                else
+                {
+                    mensaje = usuario.IdUsuario == 0 ? "Error al agregar el usuario" : "Error al actualizar el usuario";
+                }
+
+                ViewBag.Mensaje = mensaje;
+                return PartialView("_Partial");
+            }
+
+            return View(usuario);
         }
 
         [HttpGet]
         public ActionResult Delete(int IdUsuario)
         {
-            UsuarioReference.UsuarioClient objeto = new UsuarioReference.UsuarioClient();
-            var result = objeto.Delete(IdUsuario);
+            //SERVICE REFERENCE
+            //UsuarioReference.UsuarioClient objeto = new UsuarioReference.UsuarioClient();
+            //var result = objeto.Delete(IdUsuario);
 
             //BL.Usuario.Delete(IdUsuario);
+
+            bool result = DeleteXMLSOAP(IdUsuario);
+
             return RedirectToAction("GetAll");
         }
 
@@ -421,9 +460,9 @@ namespace PL_Web.Controllers
         }
 
 
-
         //WEB SERVICES  XML
 
+        //GET ALL
         //Crear XML:
         [NonAction]
         private string GetAllXMLSOAP()
@@ -488,7 +527,7 @@ namespace PL_Web.Controllers
                 return null;
             }
         }
-       
+
         //Deserealizar:
         [HttpGet]
         [NonAction]
@@ -504,7 +543,7 @@ namespace PL_Web.Controllers
             XNamespace nsA = "http://schemas.datacontract.org/2004/07/SL_WCF";    //Por si acaso lo ocupo
             XNamespace nsB = "http://schemas.microsoft.com/2003/10/Serialization/Arrays";
             XNamespace nsC = "http://schemas.datacontract.org/2004/07/ML";
-            
+
             // Acceder a los objetos dentro de "Objects"
             var objects = xdoc.Descendants(nsB + "anyType");
 
@@ -592,7 +631,7 @@ namespace PL_Web.Controllers
 
         //GETBYID
         [NonAction]
-        public ML.Usuario GetByIdXMLSOAP(int idUsuario)
+        private ML.Usuario GetByIdXMLSOAP(int idUsuario)
         {
             string action = "http://tempuri.org/IUsuario/GetById";
             string url = "http://localhost:58695/Usuario.svc";
@@ -709,8 +748,7 @@ namespace PL_Web.Controllers
                 {
                     usuario.Direccion.Colonia = new ML.Colonia
                     {
-                        IdColonia = int.TryParse(coloniaElement.Element(nsA + "Colonia")?.Element(nsA + "IdColonia")?.Value, out int idColonia) ? idColonia : 0,
-                        CodigoPostal = coloniaElement.Element(nsA + "Colonia")?.Element(nsA + "CodigoPostal")?.Value ?? string.Empty
+                        IdColonia = int.TryParse(coloniaElement.Element(nsA + "Colonia")?.Element(nsA + "IdColonia")?.Value, out int idColonia) ? idColonia : 0
                     };
                 }
 
@@ -754,6 +792,169 @@ namespace PL_Web.Controllers
         }
 
 
+        //INSERT/UPDATE
+
+        //Crear XML
+        private string CrearXmlUsuario(ML.Usuario usuario, bool esInsertar)
+        {
+            string accion = esInsertar ? "AgregarUsuario" : "ActualizarUsuario";
+            string etiqueta = esInsertar ? "Add" : "Update";
+
+            string xml = $@"<?xml version=""1.0"" encoding=""utf-8""?>
+    <soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:tem=""http://tempuri.org/"" xmlns:ml=""http://schemas.datacontract.org/2004/07/ML"">
+       <soapenv:Header/>
+       <soapenv:Body>
+          <tem:{etiqueta}>
+             <tem:usuario>
+                <ml:ApellidoMaterno>{usuario.ApellidoMaterno}</ml:ApellidoMaterno>
+                <ml:ApellidoPaterno>{usuario.ApellidoPaterno}</ml:ApellidoPaterno>
+                <ml:CURP>{usuario.CURP}</ml:CURP>
+                <ml:Celular>{usuario.Celular}</ml:Celular>
+                <ml:Direccion>
+                   <ml:Calle>{usuario.Direccion.Calle}</ml:Calle>
+                   <ml:Colonia>
+                      <ml:IdColonia>{usuario.Direccion.Colonia.IdColonia}</ml:IdColonia>
+                      <ml:Municipio>
+                         <ml:Estado>
+                            <ml:IdEstado>{usuario.Direccion.Colonia.Municipio.Estado.IdEstado}</ml:IdEstado>
+                         </ml:Estado>
+                         <ml:IdMunicipio>{usuario.Direccion.Colonia.Municipio.IdMunicipio}</ml:IdMunicipio>
+                      </ml:Municipio>
+                   </ml:Colonia>
+                   <ml:NumeroExterior>{usuario.Direccion.NumeroExterior}</ml:NumeroExterior>
+                   <ml:NumeroInterior>{usuario.Direccion.NumeroInterior}</ml:NumeroInterior>
+                </ml:Direccion>
+                <ml:Email>{usuario.Email}</ml:Email>
+                <ml:FechaNacimiento>{usuario.FechaNacimiento}</ml:FechaNacimiento>";
+
+            if (!esInsertar)
+            {
+                xml += $"<ml:IdUsuario>{usuario.IdUsuario}</ml:IdUsuario>";
+            }
+
+            xml += $@"
+                <ml:Imagen>{usuario.Imagen}</ml:Imagen>
+                <ml:Nombre>{usuario.Nombre}</ml:Nombre>
+                <ml:Password>{usuario.Password}</ml:Password>
+                <ml:Rol>
+                   <ml:IdRol>{usuario.Rol.IdRol}</ml:IdRol>
+                </ml:Rol>
+                <ml:Sexo>{usuario.Sexo}</ml:Sexo>
+                <ml:Telefono>{usuario.Telefono}</ml:Telefono>
+                <ml:UserName>{usuario.UserName}</ml:UserName>
+             </tem:usuario>
+          </tem:{etiqueta}>
+       </soapenv:Body>
+    </soapenv:Envelope>";
+
+            return xml;
+        }
+
+        [NonAction]
+        private ML.Result InsertUpdate(ML.Usuario usuario)
+        {
+            string url = "http://localhost:58695/Usuario.svc";
+            bool esInsertar = usuario.IdUsuario == 0;
+            string action = esInsertar ? "http://tempuri.org/IUsuario/Add"
+                                       : "http://tempuri.org/IUsuario/Update";
+
+            string soapEnvelope = CrearXmlUsuario(usuario, esInsertar);
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Headers.Add("SOAPAction", action);
+            request.ContentType = "text/xml;charset=\"utf-8\"";
+            request.Accept = "text/xml";
+            request.Method = "POST";
+
+            using (Stream stream = request.GetRequestStream())
+            {
+                byte[] content = Encoding.UTF8.GetBytes(soapEnvelope);
+                stream.Write(content, 0, content.Length);
+            }
+
+            try
+            {
+                using (WebResponse response = request.GetResponse())
+                {
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        string responseString = reader.ReadToEnd();
+
+                        // Leer respuesta SOAP
+                        var xdoc = XDocument.Parse(responseString);
+                        var resultElement = xdoc.Descendants()
+                                                .FirstOrDefault(e => e.Name.LocalName == "Correct" &&
+                                                                     e.GetDefaultNamespace().NamespaceName == "http://tempuri.org/");
+
+                        ML.Result result = new ML.Result
+                        {
+                            Correct = resultElement != null && bool.Parse(resultElement.Value)
+                        };
+
+                        return result;
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                using (var reader = new StreamReader(ex.Response.GetResponseStream()))
+                {
+                    string errorResponse = reader.ReadToEnd();
+                    throw new Exception($"Error en el servicio: {errorResponse}");
+                }
+            }
+        }
+
+        //DELETE
+        [NonAction]
+        private bool DeleteXMLSOAP(int idUsuario)
+        {
+            string action = "http://tempuri.org/IUsuario/Delete";
+            string url = "http://localhost:58695/Usuario.svc";
+
+            try
+            {
+                // Configuración del request SOAP
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Headers.Add("SOAPAction", action);
+                request.ContentType = "text/xml;charset=\"utf-8\"";
+                request.Accept = "text/xml";
+                request.Method = "POST";
+
+                // Crear el sobre SOAP para la eliminación
+                string soapEnvelope = $@"<?xml version=""1.0"" encoding=""utf-8""?>
+<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:tem=""http://tempuri.org/"">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tem:Delete>
+         <tem:idUsuario>{idUsuario}</tem:idUsuario>
+      </tem:Delete>
+   </soapenv:Body>
+</soapenv:Envelope>";
+
+                // Enviar la solicitud
+                using (Stream stream = request.GetRequestStream())
+                {
+                    byte[] content = Encoding.UTF8.GetBytes(soapEnvelope);
+                    stream.Write(content, 0, content.Length);
+                }
+
+                // Obtener la respuesta
+                using (WebResponse response = request.GetResponse())
+                {
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        string xmlResponse = reader.ReadToEnd();
+                        return true;
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return false; // Manejo de errores en caso de fallo
+            }
+        }
 
     }
 }
