@@ -344,7 +344,9 @@ namespace PL_Web.Controllers
                 //La primera vez que voy a ller y validar un excel
                 HttpPostedFileBase excelUsuario = Request.Files["inptExcel"];
 
-                string extensionPermitida = ".xlsx";
+                string extensionExcel = ConfigurationManager.AppSettings["ExtensionExcel"].ToString();
+
+                string extensionPermitida = extensionExcel;
 
                 if (excelUsuario.ContentLength > 0) //El usuario si me dio un archivo
                 {

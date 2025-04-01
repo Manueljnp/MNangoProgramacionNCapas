@@ -808,7 +808,7 @@ namespace BL
                         usuario.Celular = query.Celular;
                         usuario.Estatus = query.Estatus;
                         usuario.CURP = query.CURP;
-                        usuario.Imagen = query.Imagen;
+                        //usuario.Imagen = query.Imagen;
 
                         /*
                         //Hacer condición para IdRol porque es un INT y si es NULL traería STRING
