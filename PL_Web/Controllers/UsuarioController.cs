@@ -1,6 +1,7 @@
 ﻿using BL;
 using Microsoft.Ajax.Utilities;
 using Microsoft.Owin.Security.Provider;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -8,11 +9,15 @@ using System.Data.Entity.Core.Objects;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
 using System.Xml.Linq;
+using static System.Net.WebRequestMethods;
 
 namespace PL_Web.Controllers
 {
@@ -34,12 +39,15 @@ namespace PL_Web.Controllers
             //Llenar Roles NORMAL
             ML.Result resultDDLe = BL.Rol.GetAll();
 
-            //Líneas para consumir método de WCF (Usando Service Reference)
+            //Consumir WebApi
+            ML.Result result = GetAllREST(usuario);
+
+            //Líneas para consumir método de WCF SOAP (Usando Service Reference)
             /*UsuarioReference.UsuarioClient objeto = new UsuarioReference.UsuarioClient();
             var result = objeto.GetAll(usuario);*/
 
             // Método con WebService (SOAP)
-            string xmlResult = GetAllXMLSOAP(); // Llama al método SOAP para obtener el XML
+            /*string xmlResult = GetAllXMLSOAP(); // Llama al método SOAP para obtener el XML
 
             if (!string.IsNullOrEmpty(xmlResult))
             {
@@ -50,15 +58,15 @@ namespace PL_Web.Controllers
             else
             {
                 usuario.Usuarios = new List<object>();
-            }
+            }*/
 
 
             //Agregar .ToList() => para Web Services (Me funcionó sin esto)
-            usuario.Rol.Roles = resultDDLe.Objects;
+            usuario.Rol.Roles = resultDDLe.Objects.ToList();
 
             //ML.Result result = BL.Usuario.GetAll(usuario);
 
-            /*  COMENTANDO ESTO, VERIFICAR SI AFECTA
+            //(En SOAP comenté esto)
             if (result.Correct)
             {
                 //Obtuvo toda la información
@@ -67,7 +75,7 @@ namespace PL_Web.Controllers
             else
             {
                 usuario.Usuarios = new List<object>();
-            }*/
+            }
 
             return View(usuario);
         }
@@ -134,11 +142,17 @@ namespace PL_Web.Controllers
             else
             {
                 // Usar el método SOAP para obtener el usuario por ID.
-                usuario = GetByIdXMLSOAP((int)IdUsuario);
+                //usuario = GetByIdXMLSOAP((int)IdUsuario);
+
+                //Mandar a llamar Método para Api REST
+                ML.Result respuestaREST = GetByIdREST((int) IdUsuario);
 
                 // Si se encuentra el usuario, cargar Municipios y Colonias relacionados.
-                if (usuario != null)
+                if (respuestaREST != null)
                 {
+                    //Asignarle el valor de respuestaREST a usuario: (Comentar si no se usa la ApiREST)
+                    usuario = (ML.Usuario)respuestaREST.Object;
+
                     ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
                     usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
 
@@ -275,8 +289,21 @@ namespace PL_Web.Controllers
                     usuario.Imagen = ConvertirAArrayBytes(file);
                 }
 
-                ML.Result result = InsertUpdate(usuario);
+                //Método Agregar/Actualizar con SOAP
+                //ML.Result result = InsertUpdate(usuario);
 
+                //WebApi REST:
+                ML.Result result;
+                if(usuario.IdUsuario == 0)
+                {
+                    result = AddREST(usuario);
+                }
+                else
+                {
+                    result = UpdateREST(usuario);
+                }
+
+                //Mensajes de error para el viewBag
                 if (result.Correct)
                 {
                     mensaje = usuario.IdUsuario == 0 ? "Usuario agregado correctamente" : "Usuario actualizado correctamente";
@@ -300,9 +327,13 @@ namespace PL_Web.Controllers
             //UsuarioReference.UsuarioClient objeto = new UsuarioReference.UsuarioClient();
             //var result = objeto.Delete(IdUsuario);
 
+            //Normal llamando a BL (capa de negocios)
             //BL.Usuario.Delete(IdUsuario);
 
-            bool result = DeleteXMLSOAP(IdUsuario);
+            //Usando SOAP creando XML:
+            //bool result = DeleteXMLSOAP(IdUsuario);
+
+            ML.Result result = DeleteREST(IdUsuario);
 
             return RedirectToAction("GetAll");
         }
@@ -958,5 +989,222 @@ namespace PL_Web.Controllers
             }
         }
 
+
+
+        //Consumir WebApi en MVC con HttpClient
+        //API REST
+
+        //Primero Instalar en PL (web):
+        //Json.NET => https://www.nuget.org/packages/Newtonsoft.Json/
+        //Microsoft ASP.Net Web API 2.2 client Libraries => https://nugetmusthaves.com/Package/Microsoft.AspNet.WebApi.Client
+        //System.Net.Http => https://www.nuget.org/packages/System.Net.Http/
+
+        [NonAction]
+        public ML.Result GetAllREST(ML.Usuario user)
+        {
+            ML.Result result = new ML.Result();
+            
+            /*ML.Usuario user = new ML.Usuario
+            {
+                Nombre = "",
+                ApellidoPaterno = "",
+                ApellidoMaterno = "",
+
+                Rol = new ML.Rol
+                {
+                    IdRol = 0
+                }
+            };*/
+
+            try
+            {
+                using (var cliente = new HttpClient())
+                {
+                    //URL vs URI
+                    string endPoint = ConfigurationManager.AppSettings["UsuarioEndPoint"].ToString();
+
+                    cliente.BaseAddress = new Uri(endPoint);
+
+                    //Primero serializar el objeto 'user' a JSON:
+                    //(YA NO LO USÉ, no serializo el modelo, envío directamente el modelo)
+                    //var jsonUser = new StringContent(JsonConvert.SerializeObject(user));
+
+                    //las solicitudes GET no pueden mandar información en body,
+                    //usar POST - PUT - PATCH | usé Post y le envío el Modelo
+                    var respuesta = cliente.PostAsJsonAsync<ML.Usuario>("GetAll", user);
+
+                    respuesta.Wait(); //Esperar
+
+                    var resultServicio = respuesta.Result; //Es otro Result
+
+                    if(resultServicio.IsSuccessStatusCode)
+                    {
+                        //Leer Tarea = Leer el contenido de resultServicio como un Modelo de Result
+                        var readTask = resultServicio.Content.ReadAsAsync<ML.Result>();
+                        readTask.Wait();
+
+                        //Inicializar la lista de Objetos
+                        result.Objects = new List<object>();
+
+                        //sacar los objetos de tipo JSON que contiene readTask
+                        foreach(var item in readTask.Result.Objects)
+                        {
+                            ML.Usuario usuario = Newtonsoft.Json.JsonConvert.DeserializeObject<ML.Usuario>(item.ToString());
+
+                            result.Objects.Add(usuario);
+                        }
+                    }
+                }
+                result.Correct = true;
+
+            }
+            catch(Exception xd)
+            {
+                result.Correct = false;
+                result.ErrorMessage = xd.Message;
+                result.Ex = xd;
+            }
+
+            return result;
+        }
+
+
+        [NonAction]
+        public static ML.Result GetByIdREST(int idUsuario)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (var cliente = new HttpClient())
+                {
+                    //URL vs URI
+                    string endPoint = ConfigurationManager.AppSettings["UsuarioEndPoint"].ToString();
+
+                    cliente.BaseAddress = new Uri(endPoint);
+
+                    //Primero serializar el objeto 'user' a JSON:
+                    //(YA NO LO USÉ, no serializo el modelo, envío directamente el modelo)
+                    //var jsonUser = new StringContent(JsonConvert.SerializeObject(user));
+
+                    //las solicitudes GET no pueden mandar información en body,
+                    //usar POST - PUT - PATCH | usé Post y le envío el Modelo
+                    var respuesta = cliente.GetAsync($"GetById/{idUsuario}");
+
+                    respuesta.Wait(); //Esperar
+
+                    var resultServicio = respuesta.Result; //Es otro Result
+
+                    if (resultServicio.IsSuccessStatusCode)
+                    {
+                        //Leer Tarea = Leer el contenido de resultServicio como un Modelo de Result
+                        var readTask = resultServicio.Content.ReadAsAsync<ML.Result>();
+                        readTask.Wait();
+
+                        //Inicializar la lista de Objetos
+                        result.Object = Newtonsoft.Json.JsonConvert.DeserializeObject<ML.Usuario>(readTask.Result.Object.ToString());
+
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                    }
+                }
+            }
+            catch (Exception xd)
+            {
+                result.Correct = false;
+                result.ErrorMessage = xd.Message;
+                result.Ex = xd;
+            }
+
+            return result;
+        }
+
+        [NonAction]
+        public ML.Result AddREST(ML.Usuario usuario)
+        {
+            using (var client = new HttpClient())
+            {
+                string endPoint = ConfigurationManager.AppSettings["UsuarioEndPoint"];
+                client.BaseAddress = new Uri(endPoint);
+
+                var postTask = client.PostAsJsonAsync("Add", usuario);
+                postTask.Wait();
+
+                var result = postTask.Result;
+
+                if (result.IsSuccessStatusCode)
+                {
+                    return new ML.Result { Correct = true };
+                }
+                else
+                {
+                    return new ML.Result { Correct = false };
+                }
+            }
+        }
+
+        [NonAction]
+        public ML.Result UpdateREST(ML.Usuario usuario)
+        {
+            using (var client = new HttpClient())
+            {
+                string endPoint = ConfigurationManager.AppSettings["UsuarioEndPoint"];
+                client.BaseAddress = new Uri(endPoint);
+
+                var postTask = client.PutAsJsonAsync("Update", usuario);
+                postTask.Wait();
+
+                var result = postTask.Result;
+
+                if(result.IsSuccessStatusCode)
+                {
+                    return new ML.Result
+                    {
+                        Correct = true
+                    };
+                }
+                else
+                {
+                    return new ML.Result
+                    {
+                        Correct = false,
+                        ErrorMessage = "Error al actualizar usuario"
+                    };
+                }
+            }
+        }
+
+        [NonAction]
+        public ML.Result DeleteREST(int idUsuario)
+        {
+            using (var client = new HttpClient())
+            {
+                string endPoint = ConfigurationManager.AppSettings["UsuarioEndPoint"];
+                client.BaseAddress = new Uri(endPoint);
+                
+                //Envíar el idUsuario
+                var deleteTask = client.DeleteAsync($"Delete/{idUsuario}");
+                deleteTask.Wait();
+
+                var respuesta = deleteTask.Result;
+                if(respuesta.IsSuccessStatusCode)
+                {
+                    return new ML.Result
+                    {
+                        Correct = true
+                    };
+                }
+                else
+                {
+                    return new ML.Result
+                    {
+                        Correct = false,
+                        ErrorMessage = "Error al eliminar Usuario"
+                    };
+                }
+            }
+        }
     }
 }

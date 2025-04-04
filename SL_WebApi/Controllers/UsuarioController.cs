@@ -8,28 +8,29 @@ using System.Web.Http;
 
 namespace SL_WebApi.Controllers
 {
-    [RoutePrefix("api")]
+    [RoutePrefix("api/usuario")]
     public class UsuarioController : ApiController
     {
         [HttpPost]
-        [Route("usuario/suma")]
+        [Route("suma")]
         public IHttpActionResult Suma(int a, int b)
         {
             return Content(HttpStatusCode.OK, a+b);
         }
 
-        //Intento de llamar al BL
-        [HttpGet]
-        [Route("usuario/GetAll")]    //No sé que ruta deba ir aquí
+        //
+        [HttpPost]
+        [Route("GetAll")]    //No sé que ruta deba ir aquí
         public IHttpActionResult GetAll([FromBody] ML.Usuario usuario) //[FromBody]: Permite recibir parámetros por BODY
         {
 
             usuario.Rol = new ML.Rol();
 
-            usuario.Nombre = "";
-            usuario.ApellidoPaterno = "";
-            usuario.ApellidoMaterno = "";
-            usuario.Rol.IdRol = 0;
+            //NO ES NECESARIO => el JSON del BODY en postman ya le envía esos parámetros vacíos
+            //usuario.Nombre = "";
+            //usuario.ApellidoPaterno = "";
+            //usuario.ApellidoMaterno = "";
+            //usuario.Rol.IdRol = 0;
 
             ML.Result result = BL.Usuario.GetAll(usuario);
 
@@ -45,8 +46,8 @@ namespace SL_WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("usuario/GetById")]
-        public IHttpActionResult GetById([FromBody] int idUsuario)
+        [Route("GetById/{idUsuario}")]
+        public IHttpActionResult GetById(int idUsuario)
         {
             ML.Result result = BL.Usuario.GetById(idUsuario);
 
@@ -61,7 +62,7 @@ namespace SL_WebApi.Controllers
         }
 
         [HttpPost]
-        [Route("usuario/Add")]
+        [Route("Add")]
         public IHttpActionResult Add([FromBody] ML.Usuario usuario)
         {
             ML.Result result = BL.Usuario.Add(usuario);
@@ -78,7 +79,7 @@ namespace SL_WebApi.Controllers
         }
 
         [HttpPut]
-        [Route("usuario/Update")]
+        [Route("Update")]
         public IHttpActionResult Update([FromBody] ML.Usuario usuario)
         {
             ML.Result result = BL.Usuario.Update(usuario);
@@ -94,8 +95,8 @@ namespace SL_WebApi.Controllers
         }
 
         [HttpDelete]
-        [Route("usuario/Delete")]
-        public IHttpActionResult Delete([FromBody] int idUsuario)
+        [Route("Delete/{idUsuario}")]
+        public IHttpActionResult Delete(int idUsuario)
         {
             ML.Result result = BL.Usuario.Delete(idUsuario);
 
