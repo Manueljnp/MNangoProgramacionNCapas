@@ -1,0 +1,112 @@
+﻿@model ML.Producto.Producto
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Form</h2>
+
+@using (Html.BeginForm("Form", "Producto", FormMethod.Post, new
+{
+    @enctype = "multipart/form-data",
+    @onsubmit = "validarFormulario(event)"
+}))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @Html.HiddenFor(model => model.IdProducto)
+    @Html.HiddenFor(model => model.Imagen)
+    <div class="card p-3 bg-light shadow-sm">
+        <div class="row">
+            <div class="col">
+                @Html.LabelFor(model => model.Nombre, new { @class = "form-label text-dark fw-bold" })
+                @Html.TextBoxFor(model => model.Nombre, new
+                {
+                    @class = "form-control rounded-pill",
+                    @id = "inptNombre"
+                })
+                @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col">
+                @Html.LabelFor(model => model.Descripcion, new { @class = "form-label text-dark fw-bold" })
+                @Html.TextBoxFor(model => model.Descripcion, new
+                {
+                    @class = "form-control rounded-pill",
+                    @id = "inptDescripcion"
+                })
+            </div>
+
+            <div class="col">
+                @Html.LabelFor(model => model.Precio, new { @class = "form-label text-dark fw-bold" })
+                @Html.TextBoxFor(model => model.Precio, new
+               {
+                   @class = "form-control rounded-pill",
+                   @id = "inptPrecio"
+               })
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                @Html.LabelFor(model => model.Subcategoria.Categoria.IdCategoria, new { @class = "form-label text-dark fw-bold" })
+                @Html.DropDownListFor(model => model.Subcategoria.Categoria.IdCategoria, new SelectList
+               (Model.Subcategoria.Categoria.Categorias, "IdCategoria", "Nombre"), "Selecciona una Categoria",
+               new { @onchange = "SubcategoriaGetByIdCategoria()", @id = "ddlCategoria", @class = "form-control" })
+            </div>
+            <div class="col">
+                @Html.LabelFor(model => model.Subcategoria.IdSubcategoria, new { @class = "form-label text-dark fw-bold" })
+                @if (Model.Subcategoria.Subcategorias != null)
+                {
+                    @Html.DropDownListFor(model => model.Subcategoria.IdSubcategoria, new SelectList
+                    (Model.Subcategoria.Subcategorias, "IdSubcategoria", "Nombre"), "Selecciona una Subcategoria",
+                    new { @onchange = "CargarTabla()", @disabled = "true", @id = "ddlSubcategoria", @class = "form-control" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.Subcategoria.IdSubcategoria, new SelectList(String.Empty), "Selecciona una Subcategoria",
+                   new { @disabled = "true", @id = "ddlSubcategoria", @class = "form-control" })
+                }
+            </div>
+            <div class="col">
+                <label class="form-label text-dark fw-bold">Imagen del Producto</label>
+                <input type="file" accept=".png" name="inptFileImagen" id="inptFileImagen" class="form-control" onchange="validarExtension(); visualizarImagen(this);" />
+            </div>
+        </div>
+    </div>
+
+    <p></p>
+    <h3>Imagen del Producto</h3>
+    <div class="mb-3 mt-3 col">
+        
+        <!--Poner un Campo Oculto para mantener imagen actual si no se selecciona una nueva
+        <input type="hidden" name="ImagenActual" id="ImagenActual" value="Convert.ToBase64String(Model.Imagen)" /> -->
+        @if (Model.Imagen == null)
+        {
+            <img id="imgProducto" src="https://thumb.ac-illust.com/51/51e1c1fc6f50743937e62fca9b942694_t.jpeg" width="150" height="150" />
+        }
+        else
+        {
+            <img src="@($"data:image/jpeg;base64,{Convert.ToBase64String(Model.Imagen)}")" width="150" height="150" />
+        }
+    </div>
+
+    <div>
+        <p></p>
+        <button type="submit" class="btn btn-primary mb-2" name="btnAgregarRegistro" id="btnAgregarRegistro">Agregar Registro</button>
+    </div>
+}
+
+<!--VARiables para RUTAS Razor-->
+<script>
+    var Rutas = {
+        GetByIdCategoria: "@Url.Action("GetByIdCategoria", "Producto")"
+    };
+</script>
+
+<script src="~/Scripts/jquery-3.7.0.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+
+<script src="~/Scripts/Producto/ValidacionesFormulario.js"></script>

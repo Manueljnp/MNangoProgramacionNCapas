@@ -17,7 +17,16 @@
         <AssociationConnector Association="MNangoProgramacionNCapasBDModel.FK__Direccion__IdUsu__3D5E1FD2" />
         <AssociationConnector Association="MNangoProgramacionNCapasBDModel.FK__Municipio__IdEst__36B12243" />
         <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.UsuarioGetAllView" Width="1.5" PointX="3.375" PointY="4.75" />
-      </Diagram>
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.Categoria" Width="1.5" PointX="5.375" PointY="6.375" />
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.Producto" Width="1.5" PointX="9.875" PointY="6" />
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.Subcategoria" Width="1.5" PointX="7.625" PointY="6.125" />
+        <AssociationConnector Association="MNangoProgramacionNCapasBDModel.FK__Subcatego__IdCat__797309D9" />
+        <AssociationConnector Association="MNangoProgramacionNCapasBDModel.FK__Producto__IdSubc__0B91BA14" />
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.ProductoSucursal" Width="1.5" PointX="12.125" PointY="6.25" />
+        <EntityTypeShape EntityType="MNangoProgramacionNCapasBDModel.Sucursal" Width="1.5" PointX="9.875" PointY="10.25" />
+        <AssociationConnector Association="MNangoProgramacionNCapasBDModel.FK__ProductoS__IdPro__17036CC0" />
+        <AssociationConnector Association="MNangoProgramacionNCapasBDModel.FK__ProductoS__IdSuc__17F790F9" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

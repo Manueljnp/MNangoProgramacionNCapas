@@ -34,6 +34,11 @@ namespace DL_EF
         public virtual DbSet<Estado> Estadoes { get; set; }
         public virtual DbSet<Municipio> Municipios { get; set; }
         public virtual DbSet<UsuarioGetAllView> UsuarioGetAllViews { get; set; }
+        public virtual DbSet<Categoria> Categorias { get; set; }
+        public virtual DbSet<Producto> Productoes { get; set; }
+        public virtual DbSet<Subcategoria> Subcategorias { get; set; }
+        public virtual DbSet<ProductoSucursal> ProductoSucursals { get; set; }
+        public virtual DbSet<Sucursal> Sucursals { get; set; }
     
         public virtual int CambioEstatus(Nullable<int> idUsuario, Nullable<bool> estatus)
         {
@@ -153,6 +158,118 @@ namespace DL_EF
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<UsuarioGetById_Result>("UsuarioGetById", idUsuarioParameter);
         }
     
+        public virtual ObjectResult<UsuarioGetAll_Result> UsuarioGetAll(string nombre, string apellidoPaterno, string apellidoMaterno, Nullable<int> idRol)
+        {
+            var nombreParameter = nombre != null ?
+                new ObjectParameter("Nombre", nombre) :
+                new ObjectParameter("Nombre", typeof(string));
+    
+            var apellidoPaternoParameter = apellidoPaterno != null ?
+                new ObjectParameter("ApellidoPaterno", apellidoPaterno) :
+                new ObjectParameter("ApellidoPaterno", typeof(string));
+    
+            var apellidoMaternoParameter = apellidoMaterno != null ?
+                new ObjectParameter("ApellidoMaterno", apellidoMaterno) :
+                new ObjectParameter("ApellidoMaterno", typeof(string));
+    
+            var idRolParameter = idRol.HasValue ?
+                new ObjectParameter("IdRol", idRol) :
+                new ObjectParameter("IdRol", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<UsuarioGetAll_Result>("UsuarioGetAll", nombreParameter, apellidoPaternoParameter, apellidoMaternoParameter, idRolParameter);
+        }
+    
+        public virtual ObjectResult<UsuarioGetAllConBusquedaView_Result> UsuarioGetAllConBusquedaView(string nombre, string apellidoPaterno, string apellidoMaterno, Nullable<int> idRol)
+        {
+            var nombreParameter = nombre != null ?
+                new ObjectParameter("Nombre", nombre) :
+                new ObjectParameter("Nombre", typeof(string));
+    
+            var apellidoPaternoParameter = apellidoPaterno != null ?
+                new ObjectParameter("ApellidoPaterno", apellidoPaterno) :
+                new ObjectParameter("ApellidoPaterno", typeof(string));
+    
+            var apellidoMaternoParameter = apellidoMaterno != null ?
+                new ObjectParameter("ApellidoMaterno", apellidoMaterno) :
+                new ObjectParameter("ApellidoMaterno", typeof(string));
+    
+            var idRolParameter = idRol.HasValue ?
+                new ObjectParameter("IdRol", idRol) :
+                new ObjectParameter("IdRol", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<UsuarioGetAllConBusquedaView_Result>("UsuarioGetAllConBusquedaView", nombreParameter, apellidoPaternoParameter, apellidoMaternoParameter, idRolParameter);
+        }
+    
+        public virtual int UsuarioDelete(Nullable<int> idUsuario)
+        {
+            var idUsuarioParameter = idUsuario.HasValue ?
+                new ObjectParameter("IdUsuario", idUsuario) :
+                new ObjectParameter("IdUsuario", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("UsuarioDelete", idUsuarioParameter);
+        }
+    
+        public virtual ObjectResult<CategoriaGetAll_Result> CategoriaGetAll()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<CategoriaGetAll_Result>("CategoriaGetAll");
+        }
+    
+        public virtual ObjectResult<SubcategoriaGetByIdCategoria_Result> SubcategoriaGetByIdCategoria(Nullable<int> idCategoria)
+        {
+            var idCategoriaParameter = idCategoria.HasValue ?
+                new ObjectParameter("IdCategoria", idCategoria) :
+                new ObjectParameter("IdCategoria", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SubcategoriaGetByIdCategoria_Result>("SubcategoriaGetByIdCategoria", idCategoriaParameter);
+        }
+    
+        public virtual ObjectResult<ProductoGetAll_Result> ProductoGetAll(Nullable<int> idSubcategoria)
+        {
+            var idSubcategoriaParameter = idSubcategoria.HasValue ?
+                new ObjectParameter("IdSubcategoria", idSubcategoria) :
+                new ObjectParameter("IdSubcategoria", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ProductoGetAll_Result>("ProductoGetAll", idSubcategoriaParameter);
+        }
+    
+        public virtual int ProductoDelete(Nullable<int> idProducto)
+        {
+            var idProductoParameter = idProducto.HasValue ?
+                new ObjectParameter("IdProducto", idProducto) :
+                new ObjectParameter("IdProducto", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ProductoDelete", idProductoParameter);
+        }
+    
+        public virtual int ProductoUpdate(Nullable<int> idProducto, string producto, string descripcion, Nullable<decimal> precio, byte[] imagen, Nullable<int> idSubcateogria)
+        {
+            var idProductoParameter = idProducto.HasValue ?
+                new ObjectParameter("IdProducto", idProducto) :
+                new ObjectParameter("IdProducto", typeof(int));
+    
+            var productoParameter = producto != null ?
+                new ObjectParameter("Producto", producto) :
+                new ObjectParameter("Producto", typeof(string));
+    
+            var descripcionParameter = descripcion != null ?
+                new ObjectParameter("Descripcion", descripcion) :
+                new ObjectParameter("Descripcion", typeof(string));
+    
+            var precioParameter = precio.HasValue ?
+                new ObjectParameter("Precio", precio) :
+                new ObjectParameter("Precio", typeof(decimal));
+    
+            var imagenParameter = imagen != null ?
+                new ObjectParameter("Imagen", imagen) :
+                new ObjectParameter("Imagen", typeof(byte[]));
+    
+            var idSubcateogriaParameter = idSubcateogria.HasValue ?
+                new ObjectParameter("IdSubcateogria", idSubcateogria) :
+                new ObjectParameter("IdSubcateogria", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ProductoUpdate", idProductoParameter, productoParameter, descripcionParameter, precioParameter, imagenParameter, idSubcateogriaParameter);
+        }
+    
         public virtual int UsuarioUpdate(string userName, string nombre, string apellidoPaterno, string apellidoMaterno, string email, string password, Nullable<System.DateTime> fechaNacimiento, string sexo, string telefono, string celular, string cURP, Nullable<int> idRol, byte[] imagen, string calle, string numeroInterior, string numeroExterior, Nullable<int> idColonia, Nullable<int> idUsuario)
         {
             var userNameParameter = userName != null ?
@@ -230,55 +347,38 @@ namespace DL_EF
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("UsuarioUpdate", userNameParameter, nombreParameter, apellidoPaternoParameter, apellidoMaternoParameter, emailParameter, passwordParameter, fechaNacimientoParameter, sexoParameter, telefonoParameter, celularParameter, cURPParameter, idRolParameter, imagenParameter, calleParameter, numeroInteriorParameter, numeroExteriorParameter, idColoniaParameter, idUsuarioParameter);
         }
     
-        public virtual ObjectResult<UsuarioGetAll_Result> UsuarioGetAll(string nombre, string apellidoPaterno, string apellidoMaterno, Nullable<int> idRol)
+        public virtual ObjectResult<ProductoGetById_Result> ProductoGetById(Nullable<int> idProducto)
         {
-            var nombreParameter = nombre != null ?
-                new ObjectParameter("Nombre", nombre) :
-                new ObjectParameter("Nombre", typeof(string));
+            var idProductoParameter = idProducto.HasValue ?
+                new ObjectParameter("IdProducto", idProducto) :
+                new ObjectParameter("IdProducto", typeof(int));
     
-            var apellidoPaternoParameter = apellidoPaterno != null ?
-                new ObjectParameter("ApellidoPaterno", apellidoPaterno) :
-                new ObjectParameter("ApellidoPaterno", typeof(string));
-    
-            var apellidoMaternoParameter = apellidoMaterno != null ?
-                new ObjectParameter("ApellidoMaterno", apellidoMaterno) :
-                new ObjectParameter("ApellidoMaterno", typeof(string));
-    
-            var idRolParameter = idRol.HasValue ?
-                new ObjectParameter("IdRol", idRol) :
-                new ObjectParameter("IdRol", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<UsuarioGetAll_Result>("UsuarioGetAll", nombreParameter, apellidoPaternoParameter, apellidoMaternoParameter, idRolParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ProductoGetById_Result>("ProductoGetById", idProductoParameter);
         }
     
-        public virtual ObjectResult<UsuarioGetAllConBusquedaView_Result> UsuarioGetAllConBusquedaView(string nombre, string apellidoPaterno, string apellidoMaterno, Nullable<int> idRol)
+        public virtual int ProductoAdd(string producto, string descripcion, Nullable<decimal> precio, byte[] imagen, Nullable<int> idSubcateogria)
         {
-            var nombreParameter = nombre != null ?
-                new ObjectParameter("Nombre", nombre) :
-                new ObjectParameter("Nombre", typeof(string));
+            var productoParameter = producto != null ?
+                new ObjectParameter("Producto", producto) :
+                new ObjectParameter("Producto", typeof(string));
     
-            var apellidoPaternoParameter = apellidoPaterno != null ?
-                new ObjectParameter("ApellidoPaterno", apellidoPaterno) :
-                new ObjectParameter("ApellidoPaterno", typeof(string));
+            var descripcionParameter = descripcion != null ?
+                new ObjectParameter("Descripcion", descripcion) :
+                new ObjectParameter("Descripcion", typeof(string));
     
-            var apellidoMaternoParameter = apellidoMaterno != null ?
-                new ObjectParameter("ApellidoMaterno", apellidoMaterno) :
-                new ObjectParameter("ApellidoMaterno", typeof(string));
+            var precioParameter = precio.HasValue ?
+                new ObjectParameter("Precio", precio) :
+                new ObjectParameter("Precio", typeof(decimal));
     
-            var idRolParameter = idRol.HasValue ?
-                new ObjectParameter("IdRol", idRol) :
-                new ObjectParameter("IdRol", typeof(int));
+            var imagenParameter = imagen != null ?
+                new ObjectParameter("Imagen", imagen) :
+                new ObjectParameter("Imagen", typeof(byte[]));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<UsuarioGetAllConBusquedaView_Result>("UsuarioGetAllConBusquedaView", nombreParameter, apellidoPaternoParameter, apellidoMaternoParameter, idRolParameter);
-        }
+            var idSubcateogriaParameter = idSubcateogria.HasValue ?
+                new ObjectParameter("IdSubcateogria", idSubcateogria) :
+                new ObjectParameter("IdSubcateogria", typeof(int));
     
-        public virtual int UsuarioDelete(Nullable<int> idUsuario)
-        {
-            var idUsuarioParameter = idUsuario.HasValue ?
-                new ObjectParameter("IdUsuario", idUsuario) :
-                new ObjectParameter("IdUsuario", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("UsuarioDelete", idUsuarioParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ProductoAdd", productoParameter, descripcionParameter, precioParameter, imagenParameter, idSubcateogriaParameter);
         }
     }
 }

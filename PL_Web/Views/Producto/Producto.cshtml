@@ -1,0 +1,83 @@
+﻿@model ML.Producto.Producto
+@{
+    ViewBag.Title = "Producto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.5.1.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
+
+<h2>Producto</h2>
+
+<a href="@Url.Action("Form", "Producto")" class="btn btn-primary mb-3">Agregar Producto</a>
+
+<div class="card p-3 bg-light shadow-sm">
+    <div class="row">
+        <div class="col">
+            @Html.DropDownListFor(model => model.Subcategoria.Categoria.IdCategoria, new SelectList
+           (Model.Subcategoria.Categoria.Categorias, "IdCategoria", "Nombre"), "Selecciona una Categoria",
+           new { @onchange = "SubcategoriaGetByIdCategoria()", @id = "ddlCategoria", @class = "form-control" })
+        </div>
+        <div class="col">
+            @if (Model.Subcategoria.Subcategorias != null)
+            {
+                @Html.DropDownListFor(model => model.Subcategoria.IdSubcategoria, new SelectList
+                (Model.Subcategoria.Subcategorias, "IdSubcategoria", "Nombre"), "Selecciona una Subcategoria",
+                new { @onchange = "CargarTabla()", @disabled = "true", @id = "ddlSubcategoria", @class = "form-control" })
+            }
+            else
+            {
+                @Html.DropDownListFor(model => model.Subcategoria.IdSubcategoria, new SelectList(String.Empty), "Selecciona una Subcategoria",
+               new { @disabled = "true", @id = "ddlSubcategoria", @class = "form-control" })
+            }
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive mt-4">
+    <table class="table table-dark table-striped" id="tablaProductos">
+        <thead>
+            <tr>
+                <th scope="col">Actualizar</th>
+                <th scoope="col">Imagen</th>
+                <th scoope="col">Nombre</th>
+                <th scoope="col">Descripción</th>
+                <th scoope="col">Precio</th>
+                <th scoope="col">Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--Rellenar con JS-->
+        </tbody>
+    </table>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+
+<!--VARiables para RUTAS Razor-->
+<script>
+    var Rutas = {
+        GetByIdCategoria: "@Url.Action("GetByIdCategoria", "Producto")",
+        CargarTabla: "@Url.Action("CargarTabla", "Producto")",
+        ProductoGetById: "@Url.Action("GetById", "Producto")",
+        pathCategorias: "@Url.Action("DDLCategorias", "Producto")"
+
+    };
+</script>
+
+<!--Orden de carga de scripts:
+    -Primero, las librerías como jquery, jquery.validate y jquery-ui.
+    -Después, el archivo Validaciones.js.
+-->
+
+
+<script src="~/Scripts/jquery-3.7.0.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+
+<script src="~/Scripts/Producto/ValidacionesTabla.js"></script>

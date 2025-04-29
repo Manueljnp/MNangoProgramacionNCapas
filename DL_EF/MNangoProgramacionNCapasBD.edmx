@@ -5,6 +5,13 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="MNangoProgramacionNCapasBDModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Categoria">
+          <Key>
+            <PropertyRef Name="IdCategoria" />
+          </Key>
+          <Property Name="IdCategoria" Type="int" Nullable="false" />
+          <Property Name="Categoria" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="Colonia">
           <Key>
             <PropertyRef Name="IdColonia" />
@@ -40,12 +47,49 @@
           <Property Name="Nombre" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="IdEstado" Type="int" />
         </EntityType>
+        <EntityType Name="Producto">
+          <Key>
+            <PropertyRef Name="IdProducto" />
+          </Key>
+          <Property Name="IdProducto" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Producto" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="500" />
+          <Property Name="Precio" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Imagen" Type="varbinary(max)" />
+          <Property Name="IdSubcategoria" Type="int" />
+        </EntityType>
+        <EntityType Name="ProductoSucursal">
+          <Key>
+            <PropertyRef Name="IdProductoSucursal" />
+          </Key>
+          <Property Name="IdProductoSucursal" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdProducto" Type="int" Nullable="false" />
+          <Property Name="IdSucursal" Type="tinyint" Nullable="false" />
+          <Property Name="Stock" Type="int" />
+        </EntityType>
         <EntityType Name="Rol">
           <Key>
             <PropertyRef Name="IdRol" />
           </Key>
           <Property Name="IdRol" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Subcategoria">
+          <Key>
+            <PropertyRef Name="IdSubcategoria" />
+          </Key>
+          <Property Name="IdSubcategoria" Type="int" Nullable="false" />
+          <Property Name="Subcategoria" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="IdCategoria" Type="int" />
+        </EntityType>
+        <EntityType Name="Sucursal">
+          <Key>
+            <PropertyRef Name="IdSucursal" />
+          </Key>
+          <Property Name="IdSucursal" Type="tinyint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Latitud" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Longitud" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Usuario">
           <Key>
@@ -152,6 +196,54 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Producto__IdSubc__0B91BA14">
+          <End Role="Subcategoria" Type="Self.Subcategoria" Multiplicity="0..1" />
+          <End Role="Producto" Type="Self.Producto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Subcategoria">
+              <PropertyRef Name="IdSubcategoria" />
+            </Principal>
+            <Dependent Role="Producto">
+              <PropertyRef Name="IdSubcategoria" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductoS__IdPro__17036CC0">
+          <End Role="Producto" Type="Self.Producto" Multiplicity="1" />
+          <End Role="ProductoSucursal" Type="Self.ProductoSucursal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Producto">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="ProductoSucursal">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductoS__IdSuc__17F790F9">
+          <End Role="Sucursal" Type="Self.Sucursal" Multiplicity="1" />
+          <End Role="ProductoSucursal" Type="Self.ProductoSucursal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sucursal">
+              <PropertyRef Name="IdSucursal" />
+            </Principal>
+            <Dependent Role="ProductoSucursal">
+              <PropertyRef Name="IdSucursal" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Subcatego__IdCat__797309D9">
+          <End Role="Categoria" Type="Self.Categoria" Multiplicity="0..1" />
+          <End Role="Subcategoria" Type="Self.Subcategoria" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categoria">
+              <PropertyRef Name="IdCategoria" />
+            </Principal>
+            <Dependent Role="Subcategoria">
+              <PropertyRef Name="IdCategoria" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_IdRol">
           <End Role="Rol" Type="Self.Rol" Multiplicity="0..1" />
           <End Role="Usuario" Type="Self.Usuario" Multiplicity="*" />
@@ -168,12 +260,40 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
           <Parameter Name="IdUsuario" Type="int" Mode="In" />
           <Parameter Name="Estatus" Type="bit" Mode="In" />
         </Function>
+        <Function Name="CategoriaGetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="ColoniaGetByIdMunicipio" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IdMunicipio" Type="int" Mode="In" />
         </Function>
         <Function Name="EstadoGetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="MunicipioGetByIdEstado" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IdEstado" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ProductoAdd" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Producto" Type="varchar" Mode="In" />
+          <Parameter Name="Descripcion" Type="varchar" Mode="In" />
+          <Parameter Name="Precio" Type="decimal" Mode="In" />
+          <Parameter Name="Imagen" Type="varbinary(max)" Mode="In" />
+          <Parameter Name="IdSubcateogria" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ProductoDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdProducto" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ProductoGetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdSubcategoria" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ProductoGetById" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdProducto" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ProductoUpdate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdProducto" Type="int" Mode="In" />
+          <Parameter Name="Producto" Type="varchar" Mode="In" />
+          <Parameter Name="Descripcion" Type="varchar" Mode="In" />
+          <Parameter Name="Precio" Type="decimal" Mode="In" />
+          <Parameter Name="Imagen" Type="varbinary(max)" Mode="In" />
+          <Parameter Name="IdSubcateogria" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SubcategoriaGetByIdCategoria" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdCategoria" Type="int" Mode="In" />
         </Function>
         <Function Name="UsuarioAdd" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserName" Type="varchar" Mode="In" />
@@ -233,11 +353,16 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
           <Parameter Name="IdUsuario" Type="int" Mode="In" />
         </Function>
         <EntityContainer Name="MNangoProgramacionNCapasBDModelStoreContainer">
+          <EntitySet Name="Categoria" EntityType="Self.Categoria" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Colonia" EntityType="Self.Colonia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Direccion" EntityType="Self.Direccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Estado" EntityType="Self.Estado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Municipio" EntityType="Self.Municipio" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Producto" EntityType="Self.Producto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductoSucursal" EntityType="Self.ProductoSucursal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Rol" EntityType="Self.Rol" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Subcategoria" EntityType="Self.Subcategoria" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sucursal" EntityType="Self.Sucursal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuario" EntityType="Self.Usuario" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UsuarioGetAllView" EntityType="Self.UsuarioGetAllView" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -281,6 +406,22 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
           <AssociationSet Name="FK__Municipio__IdEst__36B12243" Association="Self.FK__Municipio__IdEst__36B12243">
             <End Role="Estado" EntitySet="Estado" />
             <End Role="Municipio" EntitySet="Municipio" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Producto__IdSubc__0B91BA14" Association="Self.FK__Producto__IdSubc__0B91BA14">
+            <End Role="Subcategoria" EntitySet="Subcategoria" />
+            <End Role="Producto" EntitySet="Producto" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductoS__IdPro__17036CC0" Association="Self.FK__ProductoS__IdPro__17036CC0">
+            <End Role="Producto" EntitySet="Producto" />
+            <End Role="ProductoSucursal" EntitySet="ProductoSucursal" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductoS__IdSuc__17F790F9" Association="Self.FK__ProductoS__IdSuc__17F790F9">
+            <End Role="Sucursal" EntitySet="Sucursal" />
+            <End Role="ProductoSucursal" EntitySet="ProductoSucursal" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Subcatego__IdCat__797309D9" Association="Self.FK__Subcatego__IdCat__797309D9">
+            <End Role="Categoria" EntitySet="Categoria" />
+            <End Role="Subcategoria" EntitySet="Subcategoria" />
           </AssociationSet>
           <AssociationSet Name="FK_IdRol" Association="Self.FK_IdRol">
             <End Role="Rol" EntitySet="Rol" />
@@ -351,6 +492,51 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
           <FunctionImport Name="UsuarioGetById" ReturnType="Collection(MNangoProgramacionNCapasBDModel.UsuarioGetById_Result)">
           <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="UsuarioGetAll" ReturnType="Collection(MNangoProgramacionNCapasBDModel.UsuarioGetAll_Result)">
+            <Parameter Name="Nombre" Mode="In" Type="String" />
+            <Parameter Name="ApellidoPaterno" Mode="In" Type="String" />
+            <Parameter Name="ApellidoMaterno" Mode="In" Type="String" />
+            <Parameter Name="IdRol" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="UsuarioGetAllConBusquedaView" ReturnType="Collection(MNangoProgramacionNCapasBDModel.UsuarioGetAllConBusquedaView_Result)">
+            <Parameter Name="Nombre" Mode="In" Type="String" />
+            <Parameter Name="ApellidoPaterno" Mode="In" Type="String" />
+            <Parameter Name="ApellidoMaterno" Mode="In" Type="String" />
+            <Parameter Name="IdRol" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="UsuarioGetAllViews" EntityType="MNangoProgramacionNCapasBDModel.UsuarioGetAllView" />
+          <FunctionImport Name="UsuarioDelete">
+          <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="CategoriaGetAll" ReturnType="Collection(MNangoProgramacionNCapasBDModel.CategoriaGetAll_Result)" />
+          <FunctionImport Name="SubcategoriaGetByIdCategoria" ReturnType="Collection(MNangoProgramacionNCapasBDModel.SubcategoriaGetByIdCategoria_Result)">
+          <Parameter Name="IdCategoria" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="Categorias" EntityType="MNangoProgramacionNCapasBDModel.Categoria" />
+          <EntitySet Name="Productoes" EntityType="MNangoProgramacionNCapasBDModel.Producto" />
+          <EntitySet Name="Subcategorias" EntityType="MNangoProgramacionNCapasBDModel.Subcategoria" />
+          <AssociationSet Name="FK__Subcatego__IdCat__797309D9" Association="MNangoProgramacionNCapasBDModel.FK__Subcatego__IdCat__797309D9">
+            <End Role="Categoria" EntitySet="Categorias" />
+            <End Role="Subcategoria" EntitySet="Subcategorias" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Producto__IdSubc__0B91BA14" Association="MNangoProgramacionNCapasBDModel.FK__Producto__IdSubc__0B91BA14">
+            <End Role="Subcategoria" EntitySet="Subcategorias" />
+            <End Role="Producto" EntitySet="Productoes" />
+          </AssociationSet>
+          <FunctionImport Name="ProductoGetAll" ReturnType="Collection(MNangoProgramacionNCapasBDModel.ProductoGetAll_Result)">
+          <Parameter Name="IdSubcategoria" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="ProductoDelete">
+          <Parameter Name="IdProducto" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="ProductoUpdate">
+            <Parameter Name="IdProducto" Mode="In" Type="Int32" />
+            <Parameter Name="Producto" Mode="In" Type="String" />
+            <Parameter Name="Descripcion" Mode="In" Type="String" />
+            <Parameter Name="Precio" Mode="In" Type="Decimal" />
+            <Parameter Name="Imagen" Mode="In" Type="Binary" />
+            <Parameter Name="IdSubcateogria" Mode="In" Type="Int32" />
+          </FunctionImport>
           <FunctionImport Name="UsuarioUpdate">
             <Parameter Name="UserName" Mode="In" Type="String" />
             <Parameter Name="Nombre" Mode="In" Type="String" />
@@ -371,22 +557,26 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
             <Parameter Name="IdColonia" Mode="In" Type="Int32" />
             <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="UsuarioGetAll" ReturnType="Collection(MNangoProgramacionNCapasBDModel.UsuarioGetAll_Result)">
-            <Parameter Name="Nombre" Mode="In" Type="String" />
-            <Parameter Name="ApellidoPaterno" Mode="In" Type="String" />
-            <Parameter Name="ApellidoMaterno" Mode="In" Type="String" />
-            <Parameter Name="IdRol" Mode="In" Type="Int32" />
+          <FunctionImport Name="ProductoGetById" ReturnType="Collection(MNangoProgramacionNCapasBDModel.ProductoGetById_Result)">
+          <Parameter Name="IdProducto" Mode="In" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="UsuarioGetAllConBusquedaView" ReturnType="Collection(MNangoProgramacionNCapasBDModel.UsuarioGetAllConBusquedaView_Result)">
-            <Parameter Name="Nombre" Mode="In" Type="String" />
-            <Parameter Name="ApellidoPaterno" Mode="In" Type="String" />
-            <Parameter Name="ApellidoMaterno" Mode="In" Type="String" />
-            <Parameter Name="IdRol" Mode="In" Type="Int32" />
+          <FunctionImport Name="ProductoAdd">
+            <Parameter Name="Producto" Mode="In" Type="String" />
+            <Parameter Name="Descripcion" Mode="In" Type="String" />
+            <Parameter Name="Precio" Mode="In" Type="Decimal" />
+            <Parameter Name="Imagen" Mode="In" Type="Binary" />
+            <Parameter Name="IdSubcateogria" Mode="In" Type="Int32" />
           </FunctionImport>
-          <EntitySet Name="UsuarioGetAllViews" EntityType="MNangoProgramacionNCapasBDModel.UsuarioGetAllView" />
-          <FunctionImport Name="UsuarioDelete">
-            <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
-          </FunctionImport>
+          <EntitySet Name="ProductoSucursals" EntityType="MNangoProgramacionNCapasBDModel.ProductoSucursal" />
+          <EntitySet Name="Sucursals" EntityType="MNangoProgramacionNCapasBDModel.Sucursal" />
+          <AssociationSet Name="FK__ProductoS__IdPro__17036CC0" Association="MNangoProgramacionNCapasBDModel.FK__ProductoS__IdPro__17036CC0">
+            <End Role="Producto" EntitySet="Productoes" />
+            <End Role="ProductoSucursal" EntitySet="ProductoSucursals" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductoS__IdSuc__17F790F9" Association="MNangoProgramacionNCapasBDModel.FK__ProductoS__IdSuc__17F790F9">
+            <End Role="Sucursal" EntitySet="Sucursals" />
+            <End Role="ProductoSucursal" EntitySet="ProductoSucursals" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Usuario">
           <Key>
@@ -644,6 +834,129 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
           <Property Name="NombreMunicipio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="NombreEstado" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
+        <ComplexType Name="CategoriaGetAll_Result">
+          <Property Type="Int32" Name="IdCategoria" Nullable="false" />
+          <Property Type="String" Name="Categoria" Nullable="false" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="SubcategoriaGetByIdCategoria_Result">
+          <Property Type="Int32" Name="IdSubcategoria" Nullable="false" />
+          <Property Type="String" Name="Subcategoria" Nullable="false" MaxLength="100" />
+        </ComplexType>
+        <EntityType Name="Categoria">
+          <Key>
+            <PropertyRef Name="IdCategoria" />
+          </Key>
+          <Property Name="IdCategoria" Type="Int32" Nullable="false" />
+          <Property Name="Categoria1" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Subcategorias" Relationship="MNangoProgramacionNCapasBDModel.FK__Subcatego__IdCat__797309D9" FromRole="Categoria" ToRole="Subcategoria" />
+        </EntityType>
+        <EntityType Name="Producto">
+          <Key>
+            <PropertyRef Name="IdProducto" />
+          </Key>
+          <Property Name="IdProducto" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Producto1" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Precio" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="Imagen" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="IdSubcategoria" Type="Int32" />
+          <NavigationProperty Name="Subcategoria" Relationship="MNangoProgramacionNCapasBDModel.FK__Producto__IdSubc__0B91BA14" FromRole="Producto" ToRole="Subcategoria" />
+          <NavigationProperty Name="ProductoSucursals" Relationship="MNangoProgramacionNCapasBDModel.FK__ProductoS__IdPro__17036CC0" FromRole="Producto" ToRole="ProductoSucursal" />
+        </EntityType>
+        <EntityType Name="Subcategoria">
+          <Key>
+            <PropertyRef Name="IdSubcategoria" />
+          </Key>
+          <Property Name="IdSubcategoria" Type="Int32" Nullable="false" />
+          <Property Name="Subcategoria1" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="IdCategoria" Type="Int32" />
+          <NavigationProperty Name="Categoria" Relationship="MNangoProgramacionNCapasBDModel.FK__Subcatego__IdCat__797309D9" FromRole="Subcategoria" ToRole="Categoria" />
+          <NavigationProperty Name="Productoes" Relationship="MNangoProgramacionNCapasBDModel.FK__Producto__IdSubc__0B91BA14" FromRole="Subcategoria" ToRole="Producto" />
+        </EntityType>
+        <Association Name="FK__Subcatego__IdCat__797309D9">
+          <End Type="MNangoProgramacionNCapasBDModel.Categoria" Role="Categoria" Multiplicity="0..1" />
+          <End Type="MNangoProgramacionNCapasBDModel.Subcategoria" Role="Subcategoria" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categoria">
+              <PropertyRef Name="IdCategoria" />
+            </Principal>
+            <Dependent Role="Subcategoria">
+              <PropertyRef Name="IdCategoria" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Producto__IdSubc__0B91BA14">
+          <End Type="MNangoProgramacionNCapasBDModel.Subcategoria" Role="Subcategoria" Multiplicity="0..1" />
+          <End Type="MNangoProgramacionNCapasBDModel.Producto" Role="Producto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Subcategoria">
+              <PropertyRef Name="IdSubcategoria" />
+            </Principal>
+            <Dependent Role="Producto">
+              <PropertyRef Name="IdSubcategoria" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="ProductoGetAll_Result">
+          <Property Type="Int32" Name="IdProducto" Nullable="false" />
+          <Property Type="String" Name="Producto" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Descripcion" Nullable="true" MaxLength="500" />
+          <Property Type="Decimal" Name="Precio" Nullable="false" Precision="10" Scale="2" />
+          <Property Type="Int32" Name="IdSubcategoria" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="ProductoGetById_Result">
+          <Property Type="Int32" Name="IdProducto" Nullable="false" />
+          <Property Type="String" Name="Producto" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Descripcion" Nullable="true" MaxLength="500" />
+          <Property Type="Decimal" Name="Precio" Nullable="false" Precision="10" Scale="2" />
+          <Property Type="Binary" Name="Imagen" Nullable="true" />
+          <Property Type="Int32" Name="IdSubcategoria" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="ProductoSucursal">
+          <Key>
+            <PropertyRef Name="IdProductoSucursal" />
+          </Key>
+          <Property Name="IdProductoSucursal" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdProducto" Type="Int32" Nullable="false" />
+          <Property Name="IdSucursal" Type="Byte" Nullable="false" />
+          <Property Name="Stock" Type="Int32" />
+          <NavigationProperty Name="Producto" Relationship="MNangoProgramacionNCapasBDModel.FK__ProductoS__IdPro__17036CC0" FromRole="ProductoSucursal" ToRole="Producto" />
+          <NavigationProperty Name="Sucursal" Relationship="MNangoProgramacionNCapasBDModel.FK__ProductoS__IdSuc__17F790F9" FromRole="ProductoSucursal" ToRole="Sucursal" />
+        </EntityType>
+        <EntityType Name="Sucursal">
+          <Key>
+            <PropertyRef Name="IdSucursal" />
+          </Key>
+          <Property Name="IdSucursal" Type="Byte" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Latitud" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Longitud" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ProductoSucursals" Relationship="MNangoProgramacionNCapasBDModel.FK__ProductoS__IdSuc__17F790F9" FromRole="Sucursal" ToRole="ProductoSucursal" />
+        </EntityType>
+        <Association Name="FK__ProductoS__IdPro__17036CC0">
+          <End Type="MNangoProgramacionNCapasBDModel.Producto" Role="Producto" Multiplicity="1" />
+          <End Type="MNangoProgramacionNCapasBDModel.ProductoSucursal" Role="ProductoSucursal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Producto">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="ProductoSucursal">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductoS__IdSuc__17F790F9">
+          <End Type="MNangoProgramacionNCapasBDModel.Sucursal" Role="Sucursal" Multiplicity="1" />
+          <End Type="MNangoProgramacionNCapasBDModel.ProductoSucursal" Role="ProductoSucursal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sucursal">
+              <PropertyRef Name="IdSucursal" />
+            </Principal>
+            <Dependent Role="ProductoSucursal">
+              <PropertyRef Name="IdSucursal" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -777,7 +1090,6 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="UsuarioUpdate" FunctionName="MNangoProgramacionNCapasBDModel.Store.UsuarioUpdate" />
           <FunctionImportMapping FunctionImportName="UsuarioGetAll" FunctionName="MNangoProgramacionNCapasBDModel.Store.UsuarioGetAll">
             <ResultMapping>
               <ComplexTypeMapping TypeName="MNangoProgramacionNCapasBDModel.UsuarioGetAll_Result">
@@ -864,6 +1176,98 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="UsuarioDelete" FunctionName="MNangoProgramacionNCapasBDModel.Store.UsuarioDelete" />
+          <FunctionImportMapping FunctionImportName="CategoriaGetAll" FunctionName="MNangoProgramacionNCapasBDModel.Store.CategoriaGetAll">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MNangoProgramacionNCapasBDModel.CategoriaGetAll_Result">
+                <ScalarProperty Name="IdCategoria" ColumnName="IdCategoria" />
+                <ScalarProperty Name="Categoria" ColumnName="Categoria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SubcategoriaGetByIdCategoria" FunctionName="MNangoProgramacionNCapasBDModel.Store.SubcategoriaGetByIdCategoria">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MNangoProgramacionNCapasBDModel.SubcategoriaGetByIdCategoria_Result">
+                <ScalarProperty Name="IdSubcategoria" ColumnName="IdSubcategoria" />
+                <ScalarProperty Name="Subcategoria" ColumnName="Subcategoria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Categorias">
+            <EntityTypeMapping TypeName="MNangoProgramacionNCapasBDModel.Categoria">
+              <MappingFragment StoreEntitySet="Categoria">
+                <ScalarProperty Name="Categoria1" ColumnName="Categoria" />
+                <ScalarProperty Name="IdCategoria" ColumnName="IdCategoria" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Productoes">
+            <EntityTypeMapping TypeName="MNangoProgramacionNCapasBDModel.Producto">
+              <MappingFragment StoreEntitySet="Producto">
+                <ScalarProperty Name="IdSubcategoria" ColumnName="IdSubcategoria" />
+                <ScalarProperty Name="Imagen" ColumnName="Imagen" />
+                <ScalarProperty Name="Precio" ColumnName="Precio" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Producto1" ColumnName="Producto" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Subcategorias">
+            <EntityTypeMapping TypeName="MNangoProgramacionNCapasBDModel.Subcategoria">
+              <MappingFragment StoreEntitySet="Subcategoria">
+                <ScalarProperty Name="IdCategoria" ColumnName="IdCategoria" />
+                <ScalarProperty Name="Subcategoria1" ColumnName="Subcategoria" />
+                <ScalarProperty Name="IdSubcategoria" ColumnName="IdSubcategoria" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="ProductoGetAll" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoGetAll">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MNangoProgramacionNCapasBDModel.ProductoGetAll_Result">
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="Producto" ColumnName="Producto" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Precio" ColumnName="Precio" />
+                <ScalarProperty Name="IdSubcategoria" ColumnName="IdSubcategoria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ProductoDelete" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoDelete" />
+          <FunctionImportMapping FunctionImportName="ProductoUpdate" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoUpdate" />
+          <FunctionImportMapping FunctionImportName="UsuarioUpdate" FunctionName="MNangoProgramacionNCapasBDModel.Store.UsuarioUpdate" />
+          <FunctionImportMapping FunctionImportName="ProductoGetById" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoGetById">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MNangoProgramacionNCapasBDModel.ProductoGetById_Result">
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="Producto" ColumnName="Producto" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Precio" ColumnName="Precio" />
+                <ScalarProperty Name="Imagen" ColumnName="Imagen" />
+                <ScalarProperty Name="IdSubcategoria" ColumnName="IdSubcategoria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ProductoAdd" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoAdd" />
+          <EntitySetMapping Name="ProductoSucursals">
+            <EntityTypeMapping TypeName="MNangoProgramacionNCapasBDModel.ProductoSucursal">
+              <MappingFragment StoreEntitySet="ProductoSucursal">
+                <ScalarProperty Name="Stock" ColumnName="Stock" />
+                <ScalarProperty Name="IdSucursal" ColumnName="IdSucursal" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="IdProductoSucursal" ColumnName="IdProductoSucursal" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sucursals">
+            <EntityTypeMapping TypeName="MNangoProgramacionNCapasBDModel.Sucursal">
+              <MappingFragment StoreEntitySet="Sucursal">
+                <ScalarProperty Name="Longitud" ColumnName="Longitud" />
+                <ScalarProperty Name="Latitud" ColumnName="Latitud" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="IdSucursal" ColumnName="IdSucursal" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
