@@ -60,12 +60,14 @@
 
 <!--VARiables para RUTAS Razor-->
 <script>
+
+    const urlEditarProducto = '@Url.Action("Form", "Producto", new {IdProducto = "__ID__"})';
+
     var Rutas = {
         GetByIdCategoria: "@Url.Action("GetByIdCategoria", "Producto")",
         CargarTabla: "@Url.Action("CargarTabla", "Producto")",
-        ProductoGetById: "@Url.Action("GetById", "Producto")",
-        pathCategorias: "@Url.Action("DDLCategorias", "Producto")"
-
+        pathCategorias: "@Url.Action("DDLCategorias", "Producto")",
+        pathDelete: "@Url.Action("Delete", "Producto")"
     };
 </script>
 
@@ -78,6 +80,6 @@
 <script src="~/Scripts/jquery-3.7.0.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+<!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">-->
 
 <script src="~/Scripts/Producto/ValidacionesTabla.js"></script>

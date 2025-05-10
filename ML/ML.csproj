@@ -45,6 +45,7 @@
     <Compile Include="Colonia.cs" />
     <Compile Include="Direccion.cs" />
     <Compile Include="Estado.cs" />
+    <Compile Include="GoogleMaps\GoogleMaps.cs" />
     <Compile Include="Municipio.cs" />
     <Compile Include="Producto\Categoria.cs" />
     <Compile Include="Producto\Producto.cs" />
@@ -60,5 +61,6 @@
   <ItemGroup>
     <None Include=".editorconfig" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

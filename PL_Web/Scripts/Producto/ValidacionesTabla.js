@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
     $('#tablaProductos').hide();
+    $('#ddlCategoria').trigger('change'); //recargar tabla
 });
 
 //Cargar Tabla (GetAll)
@@ -21,15 +22,19 @@ $('#ddlSubcategoria').on('change', function () {
 
                     $.each(result.Productos, function (i, producto) {
 
-                        var imagen = producto.ImagenBase64
-                            ? `<img src="data:image/png;base64,${producto.ImagenBase64}" alt="Imagen del usuario"
-                                style="width: 50px; height: 50px;">`
-                            : "No hay imagen";
+                        var imagenSrc = producto.ImagenBase64
+                            ? `data:image/png;base64,${producto.ImagenBase64}`
+                            : 'https://www.mon-site-bug.fr/uploads/products/default-product.png';
+
+                        var imagen = `<img src="${imagenSrc}" width=50 height="50" />`
+
+                        //Aquí generamos la URL para edicion
+                        var urlEditar = urlEditarProducto.replace('__ID__', producto.IdProducto);
 
                         tabla.append(`
                             <tr>
                                 <td>
-                                    <a class="btn btn-warning" onclick="GetById(${producto.IdProducto})">
+                                    <a class="btn btn-warning" href="${urlEditar}">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
                                 </td>
@@ -38,7 +43,7 @@ $('#ddlSubcategoria').on('change', function () {
                                 <td>${producto.Descripcion}</td>
                                 <td>${producto.Precio}</td>
                                 <td>
-                                    <a class="btn btn-danger">
+                                    <a class="btn btn-danger" onclick="Delete(${producto.IdProducto})">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </td>
@@ -111,56 +116,22 @@ function SubcategoriaGetByIdCategoria() {
     });
 }
 
-function GetById(id) {
-    $.ajax({
-        url: Rutas.ProductoGetById,
-        type: 'GET',
-        data: { IdProducto: id },
-        datatype: 'JSON',
-        success: function (result) {
-            if (result.Correct) {
+function Delete(id) {
 
-                //cargar Categorias:
-                DDLRol(() => {
-                    $('#ddlCategoria').val(producto.Subcategoria.Categoria.IdCategoria);
-                });
-
-                //Asignar valores a los campos del formulario
-                $('#inptNombre').val(producto.Nombre);
-
-                //OpenModal();
+    if (confirm('¿Estás seguro de eliminar?')) {
+        $.ajax({
+            url: Rutas.pathDelete,
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({ IdProducto: id }),
+            success: function (result) {
+                if (result.Correct) {
+                    alert('El Producto fue eliminado correctamente');
+                    $('#ddlCategoria').trigger('change'); //recargar tabla
+                } else {
+                    alert('Error al eliminar');
+                }
             }
-        }
-    });
-}
-
-function DDLRol() {
-    $.ajax({
-        url: Rutas.pathCategorias, // Ruta del controlador
-        type: 'GET',
-        dataType: 'json',
-        success: function (data) {
-            if (data && data.length > 0) {
-                let ddl = $('#ddlCategoria');
-                ddl.empty(); // Limpiar opciones anteriores
-                ddl.append($('<option>', {
-                    value: '',
-                    text: 'Selecciona un Rol'
-                }));
-
-                // Llenar opciones con los datos obtenidos
-                $.each(data, function (index, categoria) {
-                    ddl.append($('<option>', {
-                        value: producto.IdCategoria,
-                        text: producto.Nombre
-                    }));
-                });
-            } else {
-                console.error('No se encontraron roles');
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error('Error al obtener los roles:', error);
-        }
-    });
+        });
+    }
 }

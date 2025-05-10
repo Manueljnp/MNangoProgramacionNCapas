@@ -9,9 +9,17 @@
 <h2>Stock</h2>
 <p>Seleccionar la sucursal para consultar los productos</p>
 
-@Html.DropDownListFor(model => model.Sucursal.IdSucursal,
+@using (Html.BeginForm("CargarProductos", "Stock", FormMethod.Post))
+{
+    @Html.DropDownListFor(model => model.Sucursal.IdSucursal,
     new SelectList(Model.Sucursal.Sucursales, "IdSucursal", "Nombre"),
     "Selecciona una sucursal", new { @class = "form-control" })
+
+    <br />
+    <button type="submit" class="btn btn-primary">Consultar Productos</button>
+}
+
+
 
 <h2>Productos de la sucursal</h2>
 <div class="table-responsive">
@@ -20,27 +28,139 @@
     <table class="table table-dark table-striped">
         <thead>
             <tr>
-                <th scope="col">Editar</th>
                 <th scope="col">Imagen</th>
                 <th scope="col">Producto</th>
                 <th scope="col">Stock</th>
-                <th scope="col"></th>
+                <th scope="col">Editar Stock</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>
+            @if (Model.ProductoSucursal != null && Model.ProductoSucursal.ProductosSucursales != null)
+            {
+                foreach (ML.Producto.ProductoSucursal productoSucursal in Model.ProductoSucursal.ProductosSucursales)
+                {
+                    <tr>
+                        <td>
+                            @if (productoSucursal.Imagen != null)
+                            {
+                                <img id="imgProducto" src="@($"data:image/jpeg;base64,{Convert.ToBase64String(productoSucursal.Imagen)}")" width="50" height="50" />
+                            }
+                            else
+                            {
+                                <img id="imgProducto" src="https://www.mon-site-bug.fr/uploads/products/default-product.png" width="50" height="50" />
+                            }
+                        </td>
+                        <td>@productoSucursal.Nombre</td>
+                        <td>
+                            <input type="number" value="@productoSucursal.Stock"
+                                   id="stock-@productoSucursal.IdProductoSucursal"
+                                   disabled />
+                        </td>
+                        <td>
+                            <!-- Botón Editar / Cancelar -->
+                            <a href="javascript:void(0)"
+                               class="btn btn-warning btn-sm"
+                               id="btnEditar-@productoSucursal.IdProductoSucursal"
+                               onclick="habilitarEdicion(@productoSucursal.IdProductoSucursal)">
+                                <i class="bi bi-pencil"></i>
+                            </a>
 
-                    <a class="btn btn-warning">
-                        <i class="bi bi-pencil"></i>
-                    </a>
-                </td>
-                <td>
-
-                </td>
-                <td><input type="text" placeholder="Enter value"></td>
-            </tr>
+                            <!-- Botón Guardar (Oculto al inicio) -->
+                            <button class="btn btn-success btn-sm"
+                                    id="btnGuardar-@productoSucursal.IdProductoSucursal"
+                                    style="display:none"
+                                    onclick="guardarStock(@productoSucursal.IdProductoSucursal)">
+                                Guardar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5">Selecciona una sucursal y presiona "Consultar Productos"</td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
 
+<script>
+
+    function habilitarEdicion(idProductoSucursal) {
+        let inputActual = document.getElementById('stock-' + idProductoSucursal);
+        let btnEditarActual = document.getElementById('btnEditar-' + idProductoSucursal);
+        let btnGuardarActual = document.getElementById('btnGuardar-' + idProductoSucursal);
+
+        // Primero, deshabilita TODOS los inputs y restaura botones
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.disabled = true;
+        });
+
+        document.querySelectorAll('button[id^="btnGuardar-"]').forEach(btn => {
+            btn.style.display = 'none';
+        });
+
+        document.querySelectorAll('a[id^="btnEditar-"]').forEach(btn => {
+            btn.innerHTML = '<i class="bi bi-pencil"></i>';
+            btn.classList.remove('btn-secondary');
+            btn.classList.add('btn-warning');
+        });
+
+        // Si el input que se clicó estaba deshabilitado, habilítalo ahora
+        if (inputActual.disabled) {
+            inputActual.disabled = false;
+            btnGuardarActual.style.display = 'inline-block';
+            btnEditarActual.innerHTML = 'Cancelar';
+            btnEditarActual.classList.remove('btn-warning');
+            btnEditarActual.classList.add('btn-secondary');
+        } else {
+            // Si ya estaba habilitado, se deshabilita (esto ya lo hace arriba)
+            // y se cancela la edición (botones ya restaurados arriba)
+        }
+    }
+
+    function habilitarEdicion2(idProductoSucursal) {
+        let input = document.getElementById('stock-' + idProductoSucursal);
+        let btnEditar = document.getElementById('btnEditar-' + idProductoSucursal);
+        let btnGuardar = document.getElementById('btnGuardar-' + idProductoSucursal);
+
+        if (input.disabled) {
+            // Habilita input y muestra botón guardar
+            input.disabled = false;
+            btnGuardar.style.display = 'inline-block';
+            // Cambia icono por botón "Cancelar"
+            btnEditar.innerHTML = 'Cancelar';
+            btnEditar.classList.remove('btn-warning');
+            btnEditar.classList.add('btn-secondary');
+        } else {
+            // Cancela edición
+            input.disabled = true;
+            btnGuardar.style.display = 'none';
+            // Vuelve a icono lápiz
+            btnEditar.innerHTML = '<i class="bi bi-pencil"></i>';
+            btnEditar.classList.remove('btn-secondary');
+            btnEditar.classList.add('btn-warning');
+        }
+    }
+
+    function guardarStock(idProductoSucursal) {
+        let nuevoStock = document.getElementById('stock-' + idProductoSucursal).value;
+
+        // Llamada AJAX al controlador
+        $.ajax({
+            url: '@Url.Action("ActualizarStock", "Stock")',
+            type: 'POST',
+            data: { idProductoSucursal: idProductoSucursal, stock: nuevoStock },
+            success: function (response) {
+                alert('Stock actualizado correctamente');
+                // Deshabilita input y oculta botón guardar
+                habilitarEdicion(idProductoSucursal);
+            },
+            error: function () {
+                alert('Error al actualizar stock');
+            }
+        });
+    }
+</script>

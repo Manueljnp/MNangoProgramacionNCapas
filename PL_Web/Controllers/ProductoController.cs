@@ -49,20 +49,88 @@ namespace PL_Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult Form()
+        public ActionResult Form(int? idProducto)
         {
             ML.Producto.Producto producto = new ML.Producto.Producto();
             producto.Subcategoria = new ML.Producto.Subcategoria();
             producto.Subcategoria.Categoria = new ML.Producto.Categoria();
 
+            producto.Subcategoria.Categoria.Categorias = new List<object>();
+
+            if (idProducto > 0)
+            {
+                ML.Result result = BL.Producto.Producto.GetById(idProducto.Value);
+                producto = (ML.Producto.Producto)result.Object;
+
+                if (producto.Subcategoria == null)
+                {
+                    producto.Subcategoria = new ML.Producto.Subcategoria();
+                }
+                if(producto.Subcategoria.Categoria == null)
+                {
+                    producto.Subcategoria.Categoria = new ML.Producto.Categoria();
+                }
+                if(producto.Subcategoria.Subcategorias == null)
+                {
+                    producto.Subcategoria.Subcategorias = new List<object>();
+                }
+
+                ML.Result ddlSubcategoria = BL.Producto.Subcategoria.GetByIdCategoria(producto.Subcategoria.Categoria.IdCategoria);
+                producto.Subcategoria.Subcategorias = ddlSubcategoria.Objects;
+            }
+
+
             ML.Result ddlCategoria = BL.Producto.Categoria.GetAll();
             producto.Subcategoria.Categoria.Categorias = ddlCategoria.Objects;
-
-            //ML.Result ddlSubcategoria = BL.Producto.Subcategoria.GetByIdCategoria();
 
 
             return View(producto);
         }
+
+        /*
+         [HttpGet]
+        public ActionResult Form(int? idProducto)
+        {
+            ML.Producto.Producto producto = new ML.Producto.Producto();
+
+            // Asegurar que Subcategoria y Categoria están inicializadas
+            producto.Subcategoria = new ML.Producto.Subcategoria();
+            producto.Subcategoria.Categoria = new ML.Producto.Categoria();
+
+            // Inicializar la lista de subcategorías como lista vacía para evitar errores en la vista
+            producto.Subcategoria.Subcategorias = new List<Object>();
+
+            // Cargar las categorías
+            ML.Result ddlCategoria = BL.Producto.Categoria.GetAll();
+            producto.Subcategoria.Categoria.Categorias = ddlCategoria.Objects;
+
+            // Si es edición (tiene Id)
+            if (idProducto > 0)
+            {
+                ML.Result result = BL.Producto.Producto.GetById(idProducto.Value);
+                producto = (ML.Producto.Producto)result.Object;
+
+                // Asegurar que Subcategoria y Categoria no sean nulos
+                if (producto.Subcategoria == null)
+                {
+                    producto.Subcategoria = new ML.Producto.Subcategoria();
+                }
+                if (producto.Subcategoria.Categoria == null)
+                {
+                    producto.Subcategoria.Categoria = new ML.Producto.Categoria();
+                }
+
+                // Volver a cargar las categorías para el DropDownList
+                producto.Subcategoria.Categoria.Categorias = ddlCategoria.Objects;
+
+                // Aquí podrías cargar las subcategorías disponibles si quieres que salgan habilitadas al editar
+                ML.Result resultSubcategorias = BL.Producto.Subcategoria.GetByIdCategoria(producto.Subcategoria.Categoria.IdCategoria);
+                producto.Subcategoria.Subcategorias = resultSubcategorias.Objects;
+            }
+
+            return View(producto);
+        }
+         */
 
         [HttpPost]
         public ActionResult Form(ML.Producto.Producto producto)
@@ -104,26 +172,13 @@ namespace PL_Web.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPatch]
-        public JsonResult Update(ML.Producto.Producto producto)
-        {
-            ML.Result result = BL.Producto.Producto.Update(producto);
-            return Json(result, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpGet]
-        public JsonResult GetById(int idProducto)
-        {
-            ML.Result result = BL.Producto.Producto.GetById(idProducto);
-            return Json(result, JsonRequestBehavior.AllowGet);
-        }
-
+        /*
         [HttpGet]
         public JsonResult DDLCategorias(string name)
         {
             ML.Result result = BL.Producto.Categoria.GetAll();
             return Json(result, JsonRequestBehavior.AllowGet);
-        }
+        }*/
 
         //Funcion Convertir Imagen
         public byte[] ConvertirAArrayBytes(HttpPostedFileBase foto)

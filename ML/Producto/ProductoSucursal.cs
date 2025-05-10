@@ -11,7 +11,10 @@ namespace ML.Producto
         public int IdProductoSucursal { get; set; }
         public int IdProducto {  get; set; }
         public int IdSucursal { get; set; }
+        public string Sucursal { get; set; }
         public int Stock {  get; set; }
+        public string Nombre {  get; set; }
+        public byte[] Imagen { get; set; }
         public List<object> ProductosSucursales { get; set; }
     }
 }

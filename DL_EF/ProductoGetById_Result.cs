@@ -19,5 +19,6 @@ namespace DL_EF
         public decimal Precio { get; set; }
         public byte[] Imagen { get; set; }
         public Nullable<int> IdSubcategoria { get; set; }
+        public Nullable<int> IdCategoria { get; set; }
     }
 }

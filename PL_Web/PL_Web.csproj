@@ -232,10 +232,13 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CardsProductoController.cs" />
+    <Compile Include="Controllers\CorreoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProductoController.cs" />
     <Compile Include="Controllers\StockController.cs" />
+    <Compile Include="Controllers\SucursalController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -273,6 +276,17 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\Correo\Imagenes\almendras.jpg" />
+    <Content Include="Content\Correo\Imagenes\arandano.jpg" />
+    <Content Include="Content\Correo\Imagenes\carritodecompra.gif" />
+    <Content Include="Content\Correo\Imagenes\df266c_fac4ea4c28fa4e25aa5d74ba47c3e39c_mv2.gif" />
+    <Content Include="Content\Correo\Imagenes\girlshoping.gif" />
+    <Content Include="Content\Correo\Imagenes\nueces.jpg" />
+    <Content Include="Content\Correo\Imagenes\semillas_chia.jpg" />
+    <Content Include="Content\Correo\Imagenes\womanshoping.gif" />
+    <Content Include="Content\Correo\PlantillaCorreo.html" />
+    <Content Include="Content\CSS\estiloCards.css" />
+    <Content Include="Content\CSS\Style.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -299,6 +313,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
+    <Content Include="Scripts\Cards\CardsValidaciones.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
     <Content Include="Scripts\jquery-3.7.0.slim.js" />
@@ -311,6 +326,8 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\Producto\ValidacionesFormulario.js" />
     <Content Include="Scripts\Producto\ValidacionesTabla.js" />
+    <Content Include="Scripts\Stock\StockValidacionesForm.js" />
+    <Content Include="Scripts\Sucursal\Sucursal.js" />
     <Content Include="Scripts\Usuario\ValidacionesForm.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -353,6 +370,10 @@
     <Content Include="Views\Producto\Producto.cshtml" />
     <Content Include="Views\Producto\Form.cshtml" />
     <Content Include="Views\Stock\Stock.cshtml" />
+    <Content Include="Views\Correo\Enviar.cshtml" />
+    <Content Include="Views\CardsProducto\CardsProducto.cshtml" />
+    <Content Include="Views\Sucursal\GetAll.cshtml" />
+    <Content Include="Views\Sucursal\Form.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -223,15 +223,6 @@ namespace DL_EF
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SubcategoriaGetByIdCategoria_Result>("SubcategoriaGetByIdCategoria", idCategoriaParameter);
         }
     
-        public virtual ObjectResult<ProductoGetAll_Result> ProductoGetAll(Nullable<int> idSubcategoria)
-        {
-            var idSubcategoriaParameter = idSubcategoria.HasValue ?
-                new ObjectParameter("IdSubcategoria", idSubcategoria) :
-                new ObjectParameter("IdSubcategoria", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ProductoGetAll_Result>("ProductoGetAll", idSubcategoriaParameter);
-        }
-    
         public virtual int ProductoDelete(Nullable<int> idProducto)
         {
             var idProductoParameter = idProducto.HasValue ?
@@ -347,15 +338,6 @@ namespace DL_EF
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("UsuarioUpdate", userNameParameter, nombreParameter, apellidoPaternoParameter, apellidoMaternoParameter, emailParameter, passwordParameter, fechaNacimientoParameter, sexoParameter, telefonoParameter, celularParameter, cURPParameter, idRolParameter, imagenParameter, calleParameter, numeroInteriorParameter, numeroExteriorParameter, idColoniaParameter, idUsuarioParameter);
         }
     
-        public virtual ObjectResult<ProductoGetById_Result> ProductoGetById(Nullable<int> idProducto)
-        {
-            var idProductoParameter = idProducto.HasValue ?
-                new ObjectParameter("IdProducto", idProducto) :
-                new ObjectParameter("IdProducto", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ProductoGetById_Result>("ProductoGetById", idProductoParameter);
-        }
-    
         public virtual int ProductoAdd(string producto, string descripcion, Nullable<decimal> precio, byte[] imagen, Nullable<int> idSubcateogria)
         {
             var productoParameter = producto != null ?
@@ -379,6 +361,24 @@ namespace DL_EF
                 new ObjectParameter("IdSubcateogria", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ProductoAdd", productoParameter, descripcionParameter, precioParameter, imagenParameter, idSubcateogriaParameter);
+        }
+    
+        public virtual ObjectResult<ProductoGetById_Result> ProductoGetById(Nullable<int> idProducto)
+        {
+            var idProductoParameter = idProducto.HasValue ?
+                new ObjectParameter("IdProducto", idProducto) :
+                new ObjectParameter("IdProducto", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ProductoGetById_Result>("ProductoGetById", idProductoParameter);
+        }
+    
+        public virtual ObjectResult<ProductoGetAll_Result> ProductoGetAll(Nullable<int> idSubcategoria)
+        {
+            var idSubcategoriaParameter = idSubcategoria.HasValue ?
+                new ObjectParameter("IdSubcategoria", idSubcategoria) :
+                new ObjectParameter("IdSubcategoria", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ProductoGetAll_Result>("ProductoGetAll", idSubcategoriaParameter);
         }
     }
 }

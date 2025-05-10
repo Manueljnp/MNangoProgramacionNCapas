@@ -523,9 +523,6 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
             <End Role="Subcategoria" EntitySet="Subcategorias" />
             <End Role="Producto" EntitySet="Productoes" />
           </AssociationSet>
-          <FunctionImport Name="ProductoGetAll" ReturnType="Collection(MNangoProgramacionNCapasBDModel.ProductoGetAll_Result)">
-          <Parameter Name="IdSubcategoria" Mode="In" Type="Int32" />
-          </FunctionImport>
           <FunctionImport Name="ProductoDelete">
           <Parameter Name="IdProducto" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -557,9 +554,6 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
             <Parameter Name="IdColonia" Mode="In" Type="Int32" />
             <Parameter Name="IdUsuario" Mode="In" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="ProductoGetById" ReturnType="Collection(MNangoProgramacionNCapasBDModel.ProductoGetById_Result)">
-          <Parameter Name="IdProducto" Mode="In" Type="Int32" />
-          </FunctionImport>
           <FunctionImport Name="ProductoAdd">
             <Parameter Name="Producto" Mode="In" Type="String" />
             <Parameter Name="Descripcion" Mode="In" Type="String" />
@@ -577,6 +571,12 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
             <End Role="Sucursal" EntitySet="Sucursals" />
             <End Role="ProductoSucursal" EntitySet="ProductoSucursals" />
           </AssociationSet>
+          <FunctionImport Name="ProductoGetById" ReturnType="Collection(MNangoProgramacionNCapasBDModel.ProductoGetById_Result)">
+          <Parameter Name="IdProducto" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="ProductoGetAll" ReturnType="Collection(MNangoProgramacionNCapasBDModel.ProductoGetAll_Result)">
+            <Parameter Name="IdSubcategoria" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Usuario">
           <Key>
@@ -897,21 +897,6 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <ComplexType Name="ProductoGetAll_Result">
-          <Property Type="Int32" Name="IdProducto" Nullable="false" />
-          <Property Type="String" Name="Producto" Nullable="false" MaxLength="100" />
-          <Property Type="String" Name="Descripcion" Nullable="true" MaxLength="500" />
-          <Property Type="Decimal" Name="Precio" Nullable="false" Precision="10" Scale="2" />
-          <Property Type="Int32" Name="IdSubcategoria" Nullable="true" />
-        </ComplexType>
-        <ComplexType Name="ProductoGetById_Result">
-          <Property Type="Int32" Name="IdProducto" Nullable="false" />
-          <Property Type="String" Name="Producto" Nullable="false" MaxLength="100" />
-          <Property Type="String" Name="Descripcion" Nullable="true" MaxLength="500" />
-          <Property Type="Decimal" Name="Precio" Nullable="false" Precision="10" Scale="2" />
-          <Property Type="Binary" Name="Imagen" Nullable="true" />
-          <Property Type="Int32" Name="IdSubcategoria" Nullable="true" />
-        </ComplexType>
         <EntityType Name="ProductoSucursal">
           <Key>
             <PropertyRef Name="IdProductoSucursal" />
@@ -957,6 +942,23 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="ProductoGetById_Result">
+          <Property Type="Int32" Name="IdProducto" Nullable="false" />
+          <Property Type="String" Name="Producto" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Descripcion" Nullable="true" MaxLength="500" />
+          <Property Type="Decimal" Name="Precio" Nullable="false" Precision="10" Scale="2" />
+          <Property Type="Binary" Name="Imagen" Nullable="true" />
+          <Property Type="Int32" Name="IdSubcategoria" Nullable="true" />
+          <Property Type="Int32" Name="IdCategoria" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="ProductoGetAll_Result">
+          <Property Type="Int32" Name="IdProducto" Nullable="false" />
+          <Property Type="String" Name="Producto" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Descripcion" Nullable="true" MaxLength="500" />
+          <Property Type="Decimal" Name="Precio" Nullable="false" Precision="10" Scale="2" />
+          <Property Type="Binary" Name="Imagen" Nullable="true" />
+          <Property Type="Int32" Name="IdSubcategoria" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1221,32 +1223,9 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="ProductoGetAll" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoGetAll">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="MNangoProgramacionNCapasBDModel.ProductoGetAll_Result">
-                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
-                <ScalarProperty Name="Producto" ColumnName="Producto" />
-                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
-                <ScalarProperty Name="Precio" ColumnName="Precio" />
-                <ScalarProperty Name="IdSubcategoria" ColumnName="IdSubcategoria" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="ProductoDelete" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoDelete" />
           <FunctionImportMapping FunctionImportName="ProductoUpdate" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoUpdate" />
           <FunctionImportMapping FunctionImportName="UsuarioUpdate" FunctionName="MNangoProgramacionNCapasBDModel.Store.UsuarioUpdate" />
-          <FunctionImportMapping FunctionImportName="ProductoGetById" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoGetById">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="MNangoProgramacionNCapasBDModel.ProductoGetById_Result">
-                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
-                <ScalarProperty Name="Producto" ColumnName="Producto" />
-                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
-                <ScalarProperty Name="Precio" ColumnName="Precio" />
-                <ScalarProperty Name="Imagen" ColumnName="Imagen" />
-                <ScalarProperty Name="IdSubcategoria" ColumnName="IdSubcategoria" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="ProductoAdd" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoAdd" />
           <EntitySetMapping Name="ProductoSucursals">
             <EntityTypeMapping TypeName="MNangoProgramacionNCapasBDModel.ProductoSucursal">
@@ -1268,6 +1247,31 @@ warning 6002: The table/view 'MNangoProgramacionNCapasBD.dbo.UsuarioGetAllView' 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="ProductoGetById" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoGetById">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MNangoProgramacionNCapasBDModel.ProductoGetById_Result">
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="Producto" ColumnName="Producto" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Precio" ColumnName="Precio" />
+                <ScalarProperty Name="Imagen" ColumnName="Imagen" />
+                <ScalarProperty Name="IdSubcategoria" ColumnName="IdSubcategoria" />
+                <ScalarProperty Name="IdCategoria" ColumnName="IdCategoria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ProductoGetAll" FunctionName="MNangoProgramacionNCapasBDModel.Store.ProductoGetAll">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="MNangoProgramacionNCapasBDModel.ProductoGetAll_Result">
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="Producto" ColumnName="Producto" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Precio" ColumnName="Precio" />
+                <ScalarProperty Name="Imagen" ColumnName="Imagen" />
+                <ScalarProperty Name="IdSubcategoria" ColumnName="IdSubcategoria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

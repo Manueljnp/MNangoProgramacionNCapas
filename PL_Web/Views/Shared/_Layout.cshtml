@@ -18,13 +18,16 @@
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                            <!--Nombre en pagina    NombreControlador    NombreCarpeta-->
+                            <!--Nombre en pagina - NombreMétodo - NombreCarpeta/Controlador-->
                     <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Usuario", "GetAll", "Usuario", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Lista de Productos", "Producto", "Producto", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Tabla de Productos", "Producto", "Producto", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Cards de Productos", "CardsProducto", "CardsProducto", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Stock", "Stock", "Stock", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Sucursal", "GetAll", "Sucursal", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Enviar Correo", "Enviar", "Correo", new { area = "" }, new { @class = "nav-link" })</li>
                 </ul>
                  @Html.Partial("_LoginPartial")
             </div>

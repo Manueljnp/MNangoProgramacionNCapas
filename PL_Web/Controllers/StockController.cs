@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BL.Producto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -20,14 +21,31 @@ namespace PL_Web.Controllers
             ML.Result ddlSucursal = BL.Producto.Sucursal.GetAll();
             producto.Sucursal.Sucursales = ddlSucursal.Objects;
 
-            int sucursal = producto.Sucursal.IdSucursal;
+            return View(producto);
+        }
+
+        [HttpPost]
+        public ActionResult CargarProductos(ML.Producto.Producto producto)
+        {
+            int idSucursal = producto.Sucursal.IdSucursal;
+
+            // Cargar Sucursales
+            ML.Result ddlSucursal = BL.Producto.Sucursal.GetAll();
+            producto.Sucursal.Sucursales = ddlSucursal.Objects;
 
             //Cargar Datos ProductoSucursal
-            ML.Result result = BL.Producto.ProductoSucursal.GetProductoBySucursal(sucursal);
+            ML.Result result = BL.Producto.ProductoSucursal.GetProductoBySucursal(idSucursal);
+            producto.ProductoSucursal = new ML.Producto.ProductoSucursal();
             producto.ProductoSucursal.ProductosSucursales = result.Objects;
 
+            return View("Stock", producto);
+        }
 
-            return View(producto);
+        [HttpPost]
+        public JsonResult ActualizarStock(int idProductoSucursal, int stock)
+        {
+            ML.Result result = BL.Producto.ProductoSucursal.ActualizarStock(idProductoSucursal, stock);
+            return Json(result);
         }
     }
 }

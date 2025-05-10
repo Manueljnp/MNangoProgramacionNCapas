@@ -162,10 +162,6 @@
                             }
                         </td>
                         <td>
-                            <!-- Ya No usaremos el botón y dentro el Icono-->
-                            <!--<button class="bg-danger">
-                                <i class="bi bi-trash3"></i>
-                            </button>-->
                             <!-- Cambiar a ANCHOR (a) y en el CLASS poner BTN, Además se hace una condición con JScript-->
                             <a href="@Url.Action("Delete", "Usuario", new {IdUsuario = usuario.IdUsuario})"
                                class="btn btn-danger " onclick="return confirm('Seguro que lo quieres borrar?')">

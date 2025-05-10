@@ -1,4 +1,16 @@
-﻿function SubcategoriaGetByIdCategoria() {
+﻿$(document).ready(function () {
+    let idSubcategoria = $('#ddlSubcategoria').val();
+
+    if (idSubcategoria && idSubcategoria !== "" && idSubcategoria !== "0") {
+        $(ddlSubcategoria).prop('disabled', false);
+        $(ddlSubcategoria).data('idSubcategoriaActual', idSubcategoria);
+
+        console.log("entró al if");
+        console.log(idSubcategoria);
+    }
+});
+
+function SubcategoriaGetByIdCategoria() {
     let ddlCategoria = $('#ddlCategoria');
     let ddlSubcategoria = $('#ddlSubcategoria');
     let idCategoria = ddlCategoria.val();
@@ -29,18 +41,23 @@
                 });
 
                 ddlSubcategoria.prop("disabled", false); //Habilitar
-                $('#tablaProductos').hide(); //ocultar tabla
             } else {
                 ddlSubcategoria.prop("disabled", true); //Deshabilitar
-                $('#tablaProductos').hide(); //ocultar tabla
             }
 
-            ddlSubcategoria.val(""); // Limpiar selección
+            //CORRECCIÓN
+            //Solo limpiar si NO tiene valor ya seleccionado (o si vamos a agregar)
+            let idSubcategoriaActual = ddlSubcategoria.data('idSubcategoriaActual');
+            if (idSubcategoriaActual && idSubcategoriaActual !== "0") {
+                ddlSubcategoria.val(idSubcategoriaActual);
+            }
+            else {
+                ddlSubcategoria.val(""); //Limpiar selección (caso agregar)
+            }
         },
         error: function (xhr) {
             console.log(xhr);
             ddlSubcategoria.prop("disabled", true); // En caso de error
-            $('#tablaProductos').hide(); //ocultar tabla
         }
     });
 }

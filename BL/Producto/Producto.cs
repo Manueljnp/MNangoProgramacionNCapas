@@ -32,7 +32,14 @@ namespace BL.Producto
                             producto.Nombre = item.Producto;
                             producto.Descripcion = item.Descripcion;
                             producto.Precio = item.Precio;
-                            //producto.Imagen = item.Imagen;
+
+                            producto.Imagen = item.Imagen;
+
+                            if (producto.Imagen != null)
+                            {
+                                producto.ImagenBase64 = Convert.ToBase64String(producto.Imagen);
+                            }
+
                             producto.Subcategoria.IdSubcategoria = item.IdSubcategoria.Value;
 
                             result.Objects.Add(producto);
@@ -70,6 +77,7 @@ namespace BL.Producto
                     {
                         ML.Producto.Producto producto = new ML.Producto.Producto();
                         producto.Subcategoria = new ML.Producto.Subcategoria();
+                        producto.Subcategoria.Categoria = new ML.Producto.Categoria();
 
 
                         producto.IdProducto = query.IdProducto;
@@ -78,7 +86,7 @@ namespace BL.Producto
                         producto.Precio = query.Precio;
                         producto.Imagen = query.Imagen;
                         producto.Subcategoria.IdSubcategoria = query.IdSubcategoria.Value;
-
+                        producto.Subcategoria.Categoria.IdCategoria = query.IdCategoria.Value;
 
                         result.Correct = true;
                         result.Object = producto;
@@ -142,7 +150,7 @@ namespace BL.Producto
                     int filasAfectadas = context.ProductoUpdate
                         (producto.IdProducto, producto.Nombre, producto.Descripcion, producto.Precio, producto.Imagen, producto.Subcategoria.IdSubcategoria);
 
-                    if(filasAfectadas > 0)
+                    if (filasAfectadas > 0)
                     {
                         result.Correct = true;
                     }

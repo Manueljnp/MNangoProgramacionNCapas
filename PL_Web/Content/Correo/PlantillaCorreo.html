@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ofertas de Productos Naturales</title>
+    <style>
+        body {
+            background-color: #fdfcfb;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #4e342e;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6d4c41;
+        }
+
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .card {
+            width: 48%;
+            background-color: #fad6a7;
+            border: 1px solid #d7ccc8;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+            .card img {
+                width: 100%;
+                border-radius: 8px;
+            }
+
+        .price {
+            color: #2e7d32;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .gif {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #8d6e63;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>¡Ofertas Especiales para {{NombreUsuario}}!</h1>
+
+        <div class="products">
+            <div class="card">
+                <img src="../Correo/Imagenes/semillas_chia.jpg" alt="Semillas de Chía">
+                <p>Semillas de Chía 250g</p>
+                <p class="price">$45 MXN</p>
+            </div>
+
+            <div class="card">
+                <img src="/Content/Correo/Imagenes/nueces.jpg" alt="Nueces Naturales">
+                <p>Nueces Naturales 200g</p>
+                <p class="price">$80 MXN</p>
+            </div>
+
+            <div class="card">
+                <img src="../Correo/Imagenes/almendras.jpg" alt="Almendras Tostadas">
+                <p>Almendras Tostadas 150g</p>
+                <p class="price">$70 MXN</p>
+            </div>
+
+            <div class="card">
+                <img src="../Correo/Imagenes/arandano.jpg" alt="Arándanos Secos">
+                <p>Arándanos Secos 100g</p>
+                <p class="price">$50 MXN</p>
+            </div>
+        </div>
+
+        <div class="gif">
+            <img src="../Correo/Imagenes/df266c_fac4ea4c28fa4e25aa5d74ba47c3e39c_mv2.gif" alt="Oferta Especial" width="150">
+        </div>
+
+        <div class="footer">
+            <p>Tu Tienda Natural · Calle Avenida Reforma 123 · Ciudad de México, México</p>
+            <p>Tel: 55-1234-5678 · Email: contacto@tutiendanatural.com</p>
+        </div>
+    </div>
+
+</body>
+</html>
