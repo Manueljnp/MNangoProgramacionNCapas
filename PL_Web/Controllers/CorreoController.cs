@@ -64,7 +64,7 @@ namespace PL_Web.Controllers
                 mensaje.To.Add("manueljnp@hotmail.com"); //A quien vamos a mandar el correo
                 smtpClient.Send(mensaje); //Enviar el correo
             }
-            catch (Exception ex)
+            catch //(Exception ex)
             {
                 //MODAL
             }

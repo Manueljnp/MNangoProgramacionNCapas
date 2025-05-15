@@ -1,4 +1,4 @@
-﻿
+﻿@model ML.Producto.Sucursal
 @{
     ViewBag.Title = "Form";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -6,3 +6,63 @@
 
 <h2>Form</h2>
 
+<link rel="stylesheet" type="text/css" href="~/Content/CSS/Style.css" />
+
+@using (Html.BeginForm("Form", "Sucursal", FormMethod.Post))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @Html.HiddenFor(model => model.IdSucursal)
+
+    <div class="card p-3 bg-light shadow-sm">
+        <div class="row">
+            <div class="col">
+                @Html.LabelFor(model => model.Nombre, new { @class = "form-label text-dark fw-bold" })
+                @Html.TextBoxFor(model => model.Nombre, new
+                {
+                    @class = "form-control rounded-pill",
+                    @id = "inptNombre"
+                })
+
+                @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col">
+                @Html.LabelFor(model => model.Latitud, new { @class = "form-label text-dark fw-bold" })
+                @Html.TextBoxFor(model => model.Latitud, new { @class = "form-control rounded-pill disabled-lock", @id = "inptLatitud", @readonly = "readonly" })
+
+                @Html.ValidationMessageFor(model => model.Latitud, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col">
+                @Html.LabelFor(model => model.Longitud, new { @class = "form-label text-dark fw-bold" })
+                @Html.TextBoxFor(model => model.Longitud, new { @class = "form-control rounded-pill disabled-lock", @id = "inptLongitud", @readonly = "readonly" })
+
+                @Html.ValidationMessageFor(model => model.Longitud, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+    </div>
+    <div>
+        <p></p>
+        @if (Model.IdSucursal == 0)
+        {
+            <button type="submit" class="btn btn-primary mb-2" name="btnAgregarSucursal" id="btnAgregarRegistro">Agregar Sucursal</button>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-warning mb-2" name="btnAgregarSucursal" id="btnAgregarRegistro">Actualizar Sucursal</button>
+        }
+    </div>
+}
+
+<div id="map"></div>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+
+
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCt5qUAX_luLPwkcfUOJutLLavQwVFgcA&callback=initMap">
+</script>
+<script src="~/Scripts/Sucursal/Form.js"></script>

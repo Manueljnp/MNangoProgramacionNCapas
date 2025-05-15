@@ -11,7 +11,7 @@ namespace PL_Web.Controllers
     {
         // GET: Sucursal
         [HttpGet]
-        public async Task<ActionResult> GetAll()
+        public  ActionResult GetAll()
         {
             ML.Producto.Sucursal sucursal = new ML.Producto.Sucursal();
 
@@ -21,9 +21,44 @@ namespace PL_Web.Controllers
             return View(sucursal);
         }
 
-        public async Task<ActionResult> Form()
+        [HttpGet]
+        public ActionResult Form(int? idSucursal)
         {
-            return View();
+            ML.Producto.Sucursal sucursal = new ML.Producto.Sucursal();
+
+            if (idSucursal > 0)
+            {
+                ML.Result result = BL.Producto.Sucursal.GetById(idSucursal.Value);
+                sucursal = (ML.Producto.Sucursal)result.Object;
+            }
+
+            return View(sucursal);
+        }
+
+        [HttpPost]
+        public ActionResult Form(ML.Producto.Sucursal sucursal)
+        {
+
+            if (sucursal.IdSucursal == 0)
+            {
+                BL.Producto.Sucursal.Add(sucursal);
+            }
+            else
+            {
+                //UPDATE
+                BL.Producto.Sucursal.Update(sucursal);
+
+            }
+
+            return RedirectToAction("GetAll");
+        }
+
+        [HttpGet]
+        public ActionResult Delete(int idSucursal)
+        {
+            BL.Producto.Sucursal.Delete(idSucursal);
+
+            return RedirectToAction("GetAll");
         }
     }
 }

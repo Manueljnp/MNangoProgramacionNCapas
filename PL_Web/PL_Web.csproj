@@ -327,6 +327,7 @@
     <Content Include="Scripts\Producto\ValidacionesFormulario.js" />
     <Content Include="Scripts\Producto\ValidacionesTabla.js" />
     <Content Include="Scripts\Stock\StockValidacionesForm.js" />
+    <Content Include="Scripts\Sucursal\Form.js" />
     <Content Include="Scripts\Sucursal\Sucursal.js" />
     <Content Include="Scripts\Usuario\ValidacionesForm.js" />
     <Content Include="Web.config" />
