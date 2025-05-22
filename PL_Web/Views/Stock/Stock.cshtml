@@ -86,7 +86,8 @@
     </table>
 </div>
 
-<script>
+<!--
+    <script>
 
     function habilitarEdicion(idProductoSucursal) {
         let inputActual = document.getElementById('stock-' + idProductoSucursal);
@@ -160,6 +161,96 @@
             },
             error: function () {
                 alert('Error al actualizar stock');
+            }
+        });
+    }
+</script>
+-->
+
+
+<script>
+    let inputActivo = null;
+
+    function habilitarEdicion(idProductoSucursal) {
+        // Si ya hay un input habilitado, no permitir habilitar otro
+        if (inputActivo !== null && inputActivo !== idProductoSucursal) {
+            alert("Solo puedes editar un producto a la vez.");
+            return;
+        }
+
+        const input = document.getElementById(`stock-${idProductoSucursal}`);
+        const btnEditar = document.getElementById(`btnEditar-${idProductoSucursal}`);
+        const btnGuardar = document.getElementById(`btnGuardar-${idProductoSucursal}`);
+
+        // Guardar valor original por si se cancela
+        input.dataset.originalValue = input.value;
+
+        // Habilitar edición
+        input.disabled = false;
+        input.focus();
+
+        // Mostrar botón Guardar y Cancelar
+        btnEditar.innerHTML = '<i class="bi bi-x-circle"></i>'; // Cancelar
+        btnEditar.classList.remove('btn-warning');
+        btnEditar.classList.add('btn-danger');
+        btnEditar.setAttribute('onclick', `cancelarEdicion(${idProductoSucursal})`);
+        btnGuardar.style.display = 'inline-block';
+
+        inputActivo = idProductoSucursal;
+    }
+
+    function cancelarEdicion(idProductoSucursal) {
+        const input = document.getElementById(`stock-${idProductoSucursal}`);
+        const btnEditar = document.getElementById(`btnEditar-${idProductoSucursal}`);
+        const btnGuardar = document.getElementById(`btnGuardar-${idProductoSucursal}`);
+
+        // Revertir valor y deshabilitar
+        input.value = input.dataset.originalValue;
+        input.disabled = true;
+
+        // Restaurar botón Editar
+        btnEditar.innerHTML = '<i class="bi bi-pencil"></i>';
+        btnEditar.classList.remove('btn-danger');
+        btnEditar.classList.add('btn-warning');
+        btnEditar.setAttribute('onclick', `habilitarEdicion(${idProductoSucursal})`);
+
+        btnGuardar.style.display = 'none';
+        inputActivo = null;
+    }
+
+    function guardarStock(idProductoSucursal) {
+        const input = document.getElementById(`stock-${idProductoSucursal}`);
+        const nuevoStock = input.value;
+
+        // Simulación de guardar. Aquí va tu llamada AJAX o formulario.
+        console.log(`Guardando nuevo stock para producto ${idProductoSucursal}: ${nuevoStock}`);
+
+        // Después de guardar, deshabilitar input y restaurar botones
+        input.disabled = true;
+
+        const btnEditar = document.getElementById(`btnEditar-${idProductoSucursal}`);
+        const btnGuardar = document.getElementById(`btnGuardar-${idProductoSucursal}`);
+
+        btnEditar.innerHTML = '<i class="bi bi-pencil"></i>';
+        btnEditar.classList.remove('btn-danger');
+        btnEditar.classList.add('btn-warning');
+        btnEditar.setAttribute('onclick', `habilitarEdicion(${idProductoSucursal})`);
+
+        btnGuardar.style.display = 'none';
+        inputActivo = null;
+
+
+        fetch('@Url.Action("ActualizarStock", "Stock")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ idProductoSucursal: idProductoSucursal, stock: nuevoStock })
+        }).then(response => {
+            if (response.ok) {
+                alert("Stock actualizado correctamente.");
+            } else {
+                alert("Error al actualizar el stock.");
             }
         });
     }
